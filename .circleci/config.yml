@@ -1,0 +1,93 @@
+version: 2
+jobs:
+    test:
+        docker:
+            -   image: circleci/python:3.7.3
+        steps:
+            - checkout
+            -   run:
+                    name: Prepare
+                    command: pip install --user -r requirements.txt
+            -   run:
+                    name: Run tests
+                    command: python -m xmlrunner discover tests -o tests/results
+                    environment:
+                        PYTHONPATH: candybot
+            -   store_test_results:
+                    path: tests/results
+    deploy:
+        docker:
+            -   image: circleci/python:3.7.3
+        steps:
+            - checkout
+            -   run:
+                    name: Prepare
+                    command: |
+                        ([[ $CIRCLE_BRANCH = "master" ]] && echo "export SSH_PATH=$SSH_PATH_LIVE" || echo "export SSH_PATH=$SSH_PATH_DEV") >> $BASH_ENV
+                        ([[ $CIRCLE_BRANCH = "master" ]] && echo "export SSH_START=\"$SSH_START_LIVE\"" || echo "export SSH_START=\"$SSH_START_DEV\"") >> $BASH_ENV
+                        ([[ $CIRCLE_BRANCH = "master" ]] && echo "export SSH_STOP=\"$SSH_STOP_LIVE\"" || echo "export SSH_STOP=\"$SSH_STOP_DEV\"") >> $BASH_ENV
+            -   add_ssh_keys:
+                    fingerprints:
+                        - "30:2c:9d:76:59:f9:03:41:90:77:0d:ec:05:3d:5d:5f"
+            -   run:
+                    name: Create Package
+                    command: python build/package.py
+            -   run:
+                    name: Transfer Package
+                    command: |
+                        ssh-keyscan $SSH_HOST >> ~/.ssh/known_hosts
+                        scp build/package.zip "$SSH_USER@$SSH_HOST:$SSH_PATH"
+                        scp build/deploy.py "$SSH_USER@$SSH_HOST:$SSH_PATH"
+            -   run:
+                    name: Deploy
+                    command: ssh $SSH_USER@$SSH_HOST "cd $SSH_PATH; $SSH_PYTHON deploy.py \"$SSH_START\" \"$SSH_STOP\""
+    tag:
+        docker:
+            -   image: circleci/python:3.7.3
+        steps:
+            - checkout
+            -   run:
+                    name: Tag Release
+                    command: |
+                        git tag v`cat version`
+                        git push --tags -q https://${GIT_PAT}@github.com/axc450/CandyBot.git
+workflows:
+    version: 2
+    release-live:
+        jobs:
+            -   test:
+                    filters:
+                        branches:
+                            only: master
+            -   tag:
+                    requires:
+                        - test
+                    filters:
+                        branches:
+                            only: master
+            -   deploy:
+                    requires:
+                        - tag
+                    filters:
+                        branches:
+                            only: master
+    release-dev:
+        jobs:
+            -   test:
+                    filters:
+                        branches:
+                            only: develop
+            -   deploy:
+                    requires:
+                        - test
+                    filters:
+                        branches:
+                            only: develop
+    test:
+        jobs:
+            -   test:
+                    filters:
+                        branches:
+                            ignore:
+                                - master
+                                - develop

@@ -1,0 +1,7 @@
+# Generated files
+__pycache__
+package.zip
+
+# Required files
+token
+db
