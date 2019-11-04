@@ -28,7 +28,7 @@ class CandyBot(discord.Client):
 def start():
     global BOT
     token = files.load_token()
-    activity = discord.Game(f"CandyBot v{__main__.VERSION}")
+    activity = discord.Game(f"CandyBot {__main__.VERSION}")
     BOT = CandyBot(activity=activity)
     print("Connecting to Discord...")
     BOT.run(token)
