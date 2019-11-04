@@ -79,6 +79,9 @@ class Embed:
         self.name = name
         self.icon_url = icon_url
 
+    def add_field(self, name, value, _):
+        self.description += f"{name}\n{value}"
+
 
 class DiscordModule:
     Embed = Embed

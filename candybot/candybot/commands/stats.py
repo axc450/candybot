@@ -18,7 +18,7 @@ class StatsCommand(Command):
     async def _run(self):
         info = self._get_info()
         candy = self._get_candy()
-        fields = [("info", info), ("candy", candy)]
+        fields = [("info", info, True), ("candy", candy, True)]
         await self.send(fields=fields)
 
     def _get_info(self):
