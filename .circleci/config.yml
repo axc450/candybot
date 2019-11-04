@@ -24,8 +24,8 @@ jobs:
                     name: Prepare
                     command: |
                         ([[ $CIRCLE_BRANCH = "master" ]] && echo "export SSH_PATH=$SSH_PATH_LIVE" || echo "export SSH_PATH=$SSH_PATH_DEV") >> $BASH_ENV
-                        ([[ $CIRCLE_BRANCH = "master" ]] && echo "export SSH_START=$SSH_START_LIVE" || echo "export SSH_START=$SSH_START_DEV") >> $BASH_ENV
-                        ([[ $CIRCLE_BRANCH = "master" ]] && echo "export SSH_STOP=$SSH_STOP_LIVE" || echo "export SSH_STOP=$SSH_STOP_DEV") >> $BASH_ENV
+                        ([[ $CIRCLE_BRANCH = "master" ]] && echo "export SSH_START=\"$SSH_START_LIVE\"" || echo "export SSH_START=\"$SSH_START_DEV\"") >> $BASH_ENV
+                        ([[ $CIRCLE_BRANCH = "master" ]] && echo "export SSH_STOP=\"$SSH_STOP_LIVE\"" || echo "export SSH_STOP=\"$SSH_STOP_DEV\"") >> $BASH_ENV
             -   add_ssh_keys:
                     fingerprints:
                         - "30:2c:9d:76:59:f9:03:41:90:77:0d:ec:05:3d:5d:5f"
