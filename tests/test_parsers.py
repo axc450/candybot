@@ -1,109 +1,114 @@
-import asyncio
-from unittest import TestCase
-from unittest.mock import Mock
-from candybot.commands.framework import parse_command, parse_args, ArgumentSpec
-from candybot.commands.candy import CandyCommand
-from candybot.commands.lb import LeaderboardCommand
-from candybot.commands.settings.max import MaxCommand
-from candybot.commands.settings.chance import ChanceCommand
-from candybot.commands.settings.candy.add import AddCandyCommand
-from candybot.commands.framework import SettingsCommand
-from candybot.commands.framework import CandySettingsCommand
-
-
-def resolve(c):
-    return asyncio.get_event_loop().run_until_complete(c)
+from asynctest import TestCase, CoroutineMock
+from unittest.mock import Mock, MagicMock, patch
+from candybot.commands.framework import parse_command, parse_args
 
 
 class Commands(TestCase):
 
+    @staticmethod
+    def mock_command(name, aliases=[], ignore=False, subcommands=[]):
+        mock = Mock(aliases=aliases, ignore=ignore, subcommands=subcommands)
+        mock.name = name
+        return mock
+
+    def setUp(self):
+        # Build command tree similar to the real one
+        self.c = self.mock_command("c")
+        self.d = self.mock_command("d", aliases=["D"])
+        self.e = self.mock_command("e", ignore=True)
+        self.f = self.mock_command("f")
+        self.g = self.mock_command("g", subcommands=[self.mock_command("f")])
+        self.b = self.mock_command("b", subcommands=[self.f, self.g])
+        self.a = self.mock_command("a", ignore=True, subcommands=[self.b, self.c, self.d, self.e])
+
+        # Patch the real one with the one we just built
+        p = patch("candybot.commands.framework.parsers.commands.Command", self.a)
+        p.start()
+        self.addCleanup(p.stop)
+
     def test_basic(self):
-        self.assertEqual(parse_command("candy", False), (CandyCommand, []))
-        self.assertEqual(parse_command("settings", False), (SettingsCommand, []))
-        self.assertEqual(parse_command("settings max", False), (MaxCommand, []))
-        self.assertEqual(parse_command("settings candy", False), (CandySettingsCommand, []))
-        self.assertEqual(parse_command("settings candy add", False), (AddCandyCommand, []))
-        self.assertEqual(parse_command("abc", False), (None, ["abc"]))
+        self.assertEqual(parse_command("c", False), (self.c, []))
+        self.assertEqual(parse_command("b", False), (self.b, []))
+        self.assertEqual(parse_command("b f", False), (self.f, []))
+        self.assertEqual(parse_command("x", False), (None, ["x"]))
 
     def test_short(self):
-        self.assertEqual(parse_command("max", False), (MaxCommand, []))
-        self.assertEqual(parse_command("chance", False), (ChanceCommand, []))
+        self.assertEqual(parse_command("f", False), (self.f, []))
 
     def test_alias(self):
-        self.assertEqual(parse_command("leaderboard", False), (LeaderboardCommand, []))
-        self.assertEqual(parse_command("addcandy", False), (AddCandyCommand, []))
+        self.assertEqual(parse_command("D", False), (self.d, []))
 
     def test_args(self):
-        self.assertEqual(parse_command("candy a b c", False), (CandyCommand, ["a", "b", "c"]))
-        self.assertEqual(parse_command("settings candy add a b c", False), (AddCandyCommand, ["a", "b", "c"]))
+        self.assertEqual(parse_command("c 1 2 3", False), (self.c, ["1", "2", "3"]))
+        self.assertEqual(parse_command("b f 1 2 3", False), (self.f, ["1", "2", "3"]))
 
     def test_leaf_only(self):
-        self.assertEqual(parse_command("candy", True), (CandyCommand, []))
-        self.assertEqual(parse_command("settings", True), (None, ["settings"]))
-        self.assertEqual(parse_command("settings candy add", True), (AddCandyCommand, []))
-        self.assertEqual(parse_command("settings candy a", True), (None, ["settings", "candy", "a"]))
+        self.assertEqual(parse_command("c", True), (self.c, []))
+        self.assertEqual(parse_command("b", True), (None, ["b"]))
+        self.assertEqual(parse_command("b f", True), (self.f, []))
+        self.assertEqual(parse_command("b g 1", True), (None, ["b", "g", "1"]))
 
     def test_ignore(self):
-        self.assertEqual(parse_command("pick a b c", False), (None, ["pick", "a", "b", "c"]))
+        self.assertEqual(parse_command("e 1 2 3", False), (None, ["e", "1", "2", "3"]))
 
 
 class Args(TestCase):
 
     @staticmethod
-    def mock_argument(name, ignore_spaces):
-        mock = Mock()
-        mock.name = f"name_{name}"
-        mock.ignore_spaces = ignore_spaces
-        mock.parse.return_value = asyncio.Future()
-        mock.parse.return_value.set_result(f"parsed_{name}")
-        return mock
+    def mock_argument(ignore_spaces=False):
+        return Mock(parse=CoroutineMock(), ignore_spaces=ignore_spaces)
 
-    def test_basic(self):
-        argument_a = self.mock_argument("a", False)
-        argument_b = self.mock_argument("b", False)
-        argument_c = self.mock_argument("c", False)
-        spec = ArgumentSpec([argument_a, argument_b, argument_c], False)
+    @staticmethod
+    def mock_spec(args=[], optional=False):
+        spec = MagicMock(optional=optional, args=args)
+        spec.__iter__.return_value = spec.args
+        spec.__len__.return_value = len(spec.args)
+        return spec
+
+    async def test_basic(self):
+        spec = self.mock_spec([self.mock_argument(), self.mock_argument(), self.mock_argument()])
+        args = ["a", "b", "c"]
+        expected = {spec.args[0].name: spec.args[0].parse.return_value,
+                    spec.args[1].name: spec.args[1].parse.return_value,
+                    spec.args[2].name: spec.args[2].parse.return_value}
+        result = await parse_args(args, spec, "server")
+        self.assertEqual(result, expected)
+
+    async def test_incorrect_number_of_args(self):
+        spec = self.mock_spec([self.mock_argument(), self.mock_argument(), self.mock_argument()])
+        for args in [["a", "b"], ["a", "b", "c", "d"], []]:
+            with self.subTest(args=args):
+                await self.assertAsyncRaises(IndexError, parse_args(args, spec, "server"))
+
+    async def test_no_args(self):
+        spec = self.mock_spec()
+        spec.args = []
+        result = await parse_args([], spec, "server")
+        self.assertEqual(result, {})
+
+    async def test_optional_last_arg(self):
+        spec = self.mock_spec([self.mock_argument(), self.mock_argument(), self.mock_argument()], True)
 
         args = ["a", "b", "c"]
-        result = parse_args(args, spec, "server")
-        self.assertEqual(resolve(result), {"name_a": "parsed_a", "name_b": "parsed_b", "name_c": "parsed_c"})
+        expected = {spec.args[0].name: spec.args[0].parse.return_value,
+                    spec.args[1].name: spec.args[1].parse.return_value,
+                    spec.args[2].name: spec.args[2].parse.return_value}
+        result = await parse_args(args, spec, "server")
+        self.assertEqual(result, expected)
 
         args = ["a", "b"]
-        result = parse_args(args, spec, "server")
-        self.assertRaises(IndexError, resolve, result)
+        expected = {spec.args[0].name: spec.args[0].parse.return_value,
+                    spec.args[1].name: spec.args[1].parse.return_value}
+        result = await parse_args(args, spec, "server")
+        self.assertEqual(result, expected)
+
+    async def test_ignore_spaces(self):
+        spec = self.mock_spec([self.mock_argument(), self.mock_argument(), self.mock_argument(True)], True)
 
         args = ["a", "b", "c", "d"]
-        result = parse_args(args, spec, "server")
-        self.assertRaises(IndexError, resolve, result)
-
-    def test_empty(self):
-        spec = ArgumentSpec([], False)
-
-        args = []
-        result = parse_args(args, spec, "server")
-        self.assertEqual(resolve(result), {})
-
-    def test_optional(self):
-        argument_a = self.mock_argument("a", False)
-        argument_b = self.mock_argument("b", False)
-        argument_c = self.mock_argument("c", False)
-        spec = ArgumentSpec([argument_a, argument_b, argument_c], True)
-
-        args = ["a", "b", "c"]
-        result = parse_args(args, spec, "server")
-        self.assertEqual(resolve(result), {"name_a": "parsed_a", "name_b": "parsed_b", "name_c": "parsed_c"})
-
-        args = ["a", "b"]
-        result = parse_args(args, spec, "server")
-        self.assertEqual(resolve(result), {"name_a": "parsed_a", "name_b": "parsed_b"})
-
-    def test_ignore_spaces(self):
-        argument_a = self.mock_argument("a", False)
-        argument_b = self.mock_argument("b", False)
-        argument_c = self.mock_argument("c", True)
-        spec = ArgumentSpec([argument_a, argument_b, argument_c], False)
-
-        args = ["a", "b", "c", "d"]
-        result = parse_args(args, spec, "server")
-        self.assertEqual(resolve(result), {"name_a": "parsed_a", "name_b": "parsed_b", "name_c": "parsed_c"})
-        argument_c.parse.assert_called_once_with("c d", "server")
+        expected = {spec.args[0].name: spec.args[0].parse.return_value,
+                    spec.args[1].name: spec.args[1].parse.return_value,
+                    spec.args[2].name: spec.args[2].parse.return_value}
+        result = await parse_args(args, spec, "server")
+        self.assertEqual(result, expected)
+        spec.args[2].parse.assert_called_once_with("c d", "server")
