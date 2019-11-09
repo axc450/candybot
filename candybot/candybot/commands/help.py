@@ -5,7 +5,7 @@ class HelpCommand(Command):
     name = "help"
     help = "Shows command help/menus."
     aliases = []
-    examples = ["", "inv"]
+    examples = ["", "inv", "shop buy"]
     argument_spec = ArgumentSpec([CommandArgument], True)
     clean = False
     admin = False
