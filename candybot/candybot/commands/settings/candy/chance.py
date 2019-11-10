@@ -7,7 +7,7 @@ class ChanceCandyCommand(CandySettingsCommand):
     name = "chance"
     help = "Changes the chance value of a candy."
     aliases = ["candychance"]
-    examples = []
+    examples = ["🍎 10"]
     argument_spec = ArgumentSpec([CandyArgument, AmountArgument], False)
     clean = True
     ignore = False
