@@ -7,7 +7,7 @@ class StatsCommand(Command):
     name = "stats"
     help = "Shows CandyBot stats."
     aliases = ["info"]
-    examples = []
+    examples = [""]
     argument_spec = ArgumentSpec([], False)
     clean = False
     admin = False
