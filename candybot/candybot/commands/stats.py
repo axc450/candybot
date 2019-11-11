@@ -24,7 +24,7 @@ class StatsCommand(Command):
     def _get_info(self):
         server_settings = database.get_settings(self.message.guild.id)
         channels = database.get_channels(self.message.guild.id)
-        channels = (discord.get_channel(self.message.guild, x).mention for x in channels)
+        channels = [discord.get_channel(self.message.guild, x).mention for x in channels]
         return "\n".join([
             self._make_field("Version", __main__.VERSION),
             self._make_field("Command Prefix", f"`{server_settings.prefix}`"),
