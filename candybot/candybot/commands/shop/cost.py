@@ -6,7 +6,7 @@ class CostCommand(ShopCommand):
     name = "cost"
     help = "Changes a shop item cost."
     aliases = []
-    examples = ["@role 🍎 15"]
+    examples = ["@role 🍎 15", "12345 apple 20"]
     argument_spec = ArgumentSpec([RoleArgument, CandyArgument, AmountArgument], False)
     clean = True
     admin = True
