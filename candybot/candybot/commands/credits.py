@@ -6,7 +6,7 @@ class CreditsCommand(Command):
     name = "credits"
     help = "Shows CandyBot credits."
     aliases = []
-    examples = []
+    examples = [""]
     argument_spec = ArgumentSpec([], False)
     clean = False
     admin = False
