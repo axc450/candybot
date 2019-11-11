@@ -7,7 +7,7 @@ class GiftCommand(Command):
     name = "gift"
     help = "Gifts candy to someone else."
     aliases = ["give"]
-    examples = ["@User 5 🍎", "User#1234 10 🍌"]
+    examples = ["@User 5 🍎", "User#1234 10 Apple"]
     argument_spec = ArgumentSpec([UserArgument, ZeroAmountArgument, CandyArgument], optional=False)
     clean = True
     admin = False
