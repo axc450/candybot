@@ -5,7 +5,7 @@ from candybot.commands.framework import CandySettingsCommand, ArgumentSpec, Cand
 class RemoveCandyCommand(CandySettingsCommand):
     name = "remove"
     help = "Deletes a Candy."
-    aliases = ["delcandy", "deletecandy", "removecandy", "candydel", "candydelete", "candyremove"]
+    aliases = ["candydelete", "candyremove", "deletecandy", "removecandy"]
     examples = ["🍎"]
     argument_spec = ArgumentSpec([CandyArgument], False)
     clean = True
