@@ -7,7 +7,7 @@ class SetCommand(AdminCommand):
     name = "set"
     help = "Sets a user's Candy."
     aliases = []
-    examples = ["@User 5 🍎", "User#1234 10 Apple"]
+    examples = ["@User 5 🍎", "User#1234 10 apple"]
     argument_spec = ArgumentSpec([UserArgument, AmountArgument, CandyArgument], optional=False)
     clean = True
     ignore = False
