@@ -6,7 +6,7 @@ class AddCandyCommand(CandySettingsCommand):
     name = "add"
     help = "Adds a candy."
     aliases = ["addcandy", "candyadd"]
-    examples = ["🍎"]
+    examples = ["🍎 apple"]
     argument_spec = ArgumentSpec([EmojiArgument, NameArgument], False)
     clean = True
     ignore = False
