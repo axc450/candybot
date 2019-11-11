@@ -1,6 +1,7 @@
 <img src="https://i.imgur.com/MLNSv7V.png">
 
 [![CircleCI](https://circleci.com/gh/axc450/CandyBot/tree/master.svg?style=svg)](https://circleci.com/gh/axc450/CandyBot/tree/master)
+[![Discord](https://discordapp.com/api/guilds/302508083861520384/widget.png?style=shield)](https://discord.gg/4a6m5Kq)
 
 **Holiday Event Bot for Discord**
 
