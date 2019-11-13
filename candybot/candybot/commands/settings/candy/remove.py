@@ -6,7 +6,7 @@ class RemoveCandyCommand(CandySettingsCommand):
     name = "remove"
     help = "Deletes a Candy."
     aliases = ["candydelete", "candyremove", "deletecandy", "removecandy"]
-    examples = ["🍎"]
+    examples = ["🍎", "apple"]
     argument_spec = ArgumentSpec([CandyArgument], False)
     clean = True
     ignore = False
