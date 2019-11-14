@@ -106,8 +106,8 @@ class CandyDrop:
         else:
             drop_text = f"**Random {self.candy_value.candy.name} appeared!**"
         pick_text = f"_Type **{self.command.server_settings.prefix}{self.command.invocation}** to pick them up!_"
-        border_size = max(len(drop_text), len(pick_text) - 6) // 3
-        border = self.candy_value.candy.emoji * border_size
+        border_size = max(len(drop_text), len(pick_text) - 6) // 3.5
+        border = self.candy_value.candy.emoji * int(border_size)
         return f"{border}\n" \
                f"{drop_text}\n" \
                f"{pick_text}\n" \
