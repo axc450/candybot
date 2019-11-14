@@ -101,14 +101,16 @@ class CandyDrop:
 
     @property
     def drop_str(self):
-        border = self.candy_value.candy.emoji * 12
         if self.candy_value.candy.text:
             drop_text = self.candy_value.candy.text
         else:
             drop_text = f"**Random {self.candy_value.candy.name} appeared!**"
+        pick_text = f"_Type **{self.command.server_settings.prefix}{self.command.invocation}** to pick them up!_"
+        border_size = max(len(drop_text), len(pick_text) - 6) // 3
+        border = self.candy_value.candy.emoji * border_size
         return f"{border}\n" \
                f"{drop_text}\n" \
-               f"_Type **{self.command.server_settings.prefix}{self.command.invocation}** to pick them up!_\n" \
+               f"{pick_text}\n" \
                f"{border}"
 
     @property
