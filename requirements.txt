@@ -1,3 +1,4 @@
 discord
 emoji
 unittest-xml-reporting
+asynctest

@@ -28,8 +28,7 @@ class LeaderboardCommand(Command):
             if i == len(self.emojis):
                 break
             # If the user couldn't be found, exclude them from the leaderboard
-
-            u = await converters.to_user(self.message.guild, user)
+            u = await converters.to_user(str(user), self.message.guild)
             if u is None:
                 continue
             # Add a leaderboard line

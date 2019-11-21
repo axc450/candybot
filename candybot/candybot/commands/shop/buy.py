@@ -15,7 +15,7 @@ class BuyCommand(ShopCommand):
     async def _run(self):
         inv = database.get_inv(self.message.guild.id, self.message.author.id)[self.message.author.id]
         if inv >= self.item.cost:
-            role = discord.get_role(self.message.guild, self.item.item.item)
+            role = discord.get_role(self.message.guild, self.item.item)
             user = self.message.author
             if role in user.roles:
                 await self.send("You already have that role!")

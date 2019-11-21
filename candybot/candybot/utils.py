@@ -13,8 +13,8 @@ def get_choice(values, weights):
     return random.choices(values, weights)[0]
 
 
-# TODO: Handle division by 0
-def chance_value_to_percent(values, total=None):
+def chance_value_to_percent(values):
+    total = sum(x.chance for x in values)
     if not total:
-        total = sum(x.chance for x in values)
+        return {x: 0 for x in values}
     return {x: (x.chance / total) * 100 for x in values}

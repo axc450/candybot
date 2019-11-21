@@ -108,7 +108,7 @@ class CommandNameArgument(Argument):
 
 class CandyArgument(Argument):
     name = "candy"
-    help = "Candy emoji"
+    help = "Candy emoji or name"
 
     @staticmethod
     async def parse(arg, server):
