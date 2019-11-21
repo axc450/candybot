@@ -91,7 +91,8 @@ class CandyCollection:
 
     @property
     def line_str(self):
-        return ", ".join(x.small_str for x in self._items if x.value is not 0)
+        sortlist = sorted(self._items, key=lambda x: x.value, reverse=True)
+        return ", ".join(x.small_str for x in sortlist if x.value is not 0)
 
 
 class CandyDrop:
