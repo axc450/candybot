@@ -26,7 +26,7 @@ SQLite 3.24+
 To run CandyBot yourself:
 
 - Download a version of CandyBot [here](https://github.com/axc450/CandyBot/releases).
-- If you want to run CandyBot from a different folder from where you extracted the ZIP, you can run `build/package.py` to generate another ZIP which just contains everything needed to run the bot which can they extract somewhere else.
+- If you want to run CandyBot from a different folder from where you extracted the ZIP, you can run `build/package.py` to generate another ZIP which just contains everything needed to run the bot which can then extract somewhere else.
 - Run `pip install -r requirements.txt` to install everything the bot needs to run.
 - Run `dbscripts/create.py` to create an empty database for CandyBot to use.
 - Create a file called `token` which contains the Discord token for your bot.
