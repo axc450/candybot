@@ -15,7 +15,7 @@ class BlacklistCommand(AdminCommand):
         blacklist = database.get_blacklist(self.message.guild.id)
         if self.user is None:
             self.title = ":lock: CandyBot Blacklist"
-            bl_users = [(await converters.to_user(x, self.message.guild)).mention for x in blacklist]
+            bl_users = [(await converters.to_user(str(x), self.message.guild)).mention for x in blacklist]
             await self.send("\n".join(bl_users))
         else:
             if self.user.id in blacklist:
