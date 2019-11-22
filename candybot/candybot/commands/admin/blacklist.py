@@ -1,4 +1,4 @@
-from candybot.interface import database
+from candybot.interface import database, converters
 from candybot.commands.framework import AdminCommand, ArgumentSpec, UserArgument
 
 
@@ -10,14 +10,14 @@ class BlacklistCommand(AdminCommand):
     argument_spec = ArgumentSpec([UserArgument], True)
     clean = True
     ignore = False
-
-    title = ":lock: CandyBot Blacklist"
     
     async def _run(self):
         blacklist = database.get_blacklist()
         if self.user is None:
+            self.title = ":lock: CandyBot Blacklist"
             # How to get user mentions from DB?
-            await self.send("\n".join(blacklist))
+            bl_users = [converters.to_user(x, self.message.guild).mention for x in blacklist]
+            await self.send("\n".join(bl_users)
         else:
             if self.user.id in blacklist:
                 database.set_blacklist(self.message.guild.id, self.user.id, remove=True)
