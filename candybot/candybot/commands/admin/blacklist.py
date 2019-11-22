@@ -7,7 +7,7 @@ class BlacklistCommand(AdminCommand):
     help = "Shows current blacklist or blacklists a user from interacting with CandyBot."
     aliases = ["bl"]
     examples = ["", "@User", "User#1234", "123456789"]
-    argument_spec = ArgumentSpec([UserArgument], False)
+    argument_spec = ArgumentSpec([UserArgument], True)
     clean = True
     ignore = False
 
