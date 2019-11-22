@@ -15,7 +15,6 @@ class BlacklistCommand(AdminCommand):
         blacklist = database.get_blacklist()
         if self.user is None:
             self.title = ":lock: CandyBot Blacklist"
-            # How to get user mentions from DB?
             bl_users = [converters.to_user(x, self.message.guild).mention for x in blacklist]
             await self.send("\n".join(bl_users))
         else:
