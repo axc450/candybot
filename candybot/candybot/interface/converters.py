@@ -15,9 +15,12 @@ class Context:
 async def to_user(arg, server):
     context = Context(server)
     try:
-        return await converter.MemberConverter().convert(context, arg)
+        user = await converter.MemberConverter().convert(context, arg)
     except converter.BadArgument:
         raise ArgumentError
+    if user.bot:
+        raise ArgumentError
+    return user
 
 
 async def to_channel(arg, server):
