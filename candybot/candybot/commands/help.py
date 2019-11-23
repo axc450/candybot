@@ -38,7 +38,7 @@ class HelpCommand(Command):
         prefix = self.server_settings.prefix
         command_name = command.full_name
         # TODO: Align values
-        arg_help = [f"`{x.name} `{x.help}" for x in command.argument_spec.args]
+        arg_help = [f"`{x.name}` {x.help}" for x in command.argument_spec.args]
         arg_help = "\n".join(arg_help)
         arg_examples = [f"`{prefix}{command_name} {x}`" for x in command.examples]
         arg_examples = "\n".join(arg_examples)
