@@ -112,5 +112,5 @@ async def proc(server_settings, channel, candy, force):
         if force or STATE.get(channel.id) is None:
             STATE[channel.id] = candy_drop
             database.set_stats_candy(channel.guild.id, candy_drop.candy_value)
-            # TODO: Remove this from critical section? (also, message isn't a property of CandyDrop)
+            # TODO: Remove this from critical section?
             candy_drop.message = await channel.send(candy_drop.drop_str)

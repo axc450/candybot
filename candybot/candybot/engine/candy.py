@@ -99,6 +99,7 @@ class CandyDrop:
     def __init__(self, command, candy_value):
         self.command = command
         self.candy_value = candy_value
+        self.message = None
 
     @property
     def drop_str(self):
