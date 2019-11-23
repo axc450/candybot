@@ -6,7 +6,7 @@ class AdminsCommand(SettingsCommand):
     name = "admins"
     help = "Adds or removes CandyBot admins or shows admins"
     aliases = []
-    examples = [""]
+    examples = ["", "@User", "User#1234", "123456789"]
     argument_spec = ArgumentSpec([UserArgument], True)
     clean = True
     ignore = False
