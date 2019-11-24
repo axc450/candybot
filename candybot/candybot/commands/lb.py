@@ -23,10 +23,14 @@ class LeaderboardCommand(Command):
 
     async def _generate_lines(self, sorted_invs, candy):
         lines = []
+        max_lines = len(self.emojis)
         for i, (user, inv) in enumerate(sorted_invs):
             # Break when we run out of emojis (ie. only show top 10)
-            if i == len(self.emojis):
+            if i == max_lines:
                 break
+            # If the user didn't have any candy, exclude them from the leaderboard:
+            if not inv:
+                continue
             # If the user couldn't be found, exclude them from the leaderboard
             u = await converters.to_user(str(user), self.message.guild)
             if u is None:

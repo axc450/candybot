@@ -69,6 +69,9 @@ class CandyCollection:
     def __len__(self):
         return len(self._items)
 
+    def __bool__(self):
+        return any(x.value for x in self._items)
+
     def __iter__(self):
         return iter(self._items)
 
