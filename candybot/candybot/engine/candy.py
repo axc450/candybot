@@ -69,6 +69,9 @@ class CandyCollection:
     def __len__(self):
         return len(self._items)
 
+    def __bool__(self):
+        return any(x.value for x in self._items)
+
     def __iter__(self):
         return iter(self._items)
 
@@ -99,6 +102,7 @@ class CandyDrop:
     def __init__(self, command, candy_value):
         self.command = command
         self.candy_value = candy_value
+        self.message = None
 
     @property
     def drop_str(self):

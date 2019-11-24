@@ -107,10 +107,15 @@ async def proc(server_settings, channel, candy, force):
     value = utils.get_value(server_settings.min, server_settings.max)
     candy_value = CandyValue(candy, value)
     candy_drop = CandyDrop(command, candy_value)
+    # Need to obtain the lock to avoid multiple messages from proccing
     async with STATE_LOCK:
-        # Keep this critical section as small as possible
         if force or STATE.get(channel.id) is None:
+            # This message will proc a candy drop
+            # Must set the state inside the lock to avoid other messages from proccing
             STATE[channel.id] = candy_drop
-            database.set_stats_candy(channel.guild.id, candy_drop.candy_value)
-            # TODO: Remove this from critical section? (also, message isn't a property of CandyDrop)
-            candy_drop.message = await channel.send(candy_drop.drop_str)
+        else:
+            # An earlier message was chosen to be processed
+            return
+    # Code here will be run after the lock is released and should handle any additional processing
+    database.set_stats_candy(channel.guild.id, candy_drop.candy_value)
+    candy_drop.message = await channel.send(candy_drop.drop_str)
