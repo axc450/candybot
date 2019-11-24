@@ -21,9 +21,17 @@ class PickCommand(Command):
         return self.invocation == other.invocation
 
     async def _run(self):
-        state = engine.STATE.get(self.message.channel.id)
-        if state and state.command == self:
-            await state.message.delete()
-            database.set_inv(self.message.guild.id, self.message.author.id, state.candy_value, update=True)
-            await self.send(state.pick_str)
-            del engine.STATE[self.message.channel.id]
+        # Need to obtain the lock to avoid multiple users from picking the candy
+        async with engine.STATE_LOCK:
+            state = engine.STATE.get(self.message.channel.id)
+            if state and state.command == self:
+                # This user will pick up the candy drop
+                # Must clear the state inside the lock to avoid other users from picking
+                del engine.STATE[self.message.channel.id]
+            else:
+                # An earlier command was chosen to be processed or the invocation didn't match
+                return
+        # Code here will be run after the lock is released and should handle the user successfully picking up candy
+        await state.message.delete()
+        database.set_inv(self.message.guild.id, self.message.author.id, state.candy_value, update=True)
+        await self.send(state.pick_str)
