@@ -15,6 +15,9 @@ class GiftCommand(Command):
 
     # TODO: Reduce database calls in here if possible (use a cache?)
     async def _run(self):
+        # Users shouldn't be able to gift themselves...
+        if self.message.author == self.user:
+            return
         invs = database.get_inv(self.message.guild.id, self.message.author.id, self.user.id)
         if invs[self.message.author.id][self.candy] < self.amount:
             await discord.send_embed(self.message.channel, f"You don't have enough {self.candy}!", author=self.message.author)

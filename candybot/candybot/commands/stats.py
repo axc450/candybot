@@ -28,7 +28,7 @@ class StatsCommand(Command):
         return "\n".join([
             self._make_field("Version", __main__.VERSION),
             self._make_field("Command Prefix", f"`{server_settings.prefix}`"),
-            self._make_field("Drop Chance", f"{server_settings.chance * 100}%"),
+            self._make_field("Drop Chance", f"{server_settings.chance * 100:.2f}%"),
             self._make_field("Drop Amount", f"{server_settings.min}-{server_settings.max}"),
             self._make_field("Candy Cap", server_settings.cap),
             self._make_field("Channels", ("\n" + "\n".join(channels)) if channels else "All")
