@@ -59,7 +59,7 @@ class Command:
         return self._is_admin
 
     @property
-    def is_backlisted(self):
+    def is_blacklisted(self):
         if self._is_blacklisted is None:
             if self.message.author.guild_permissions.administrator:
                 self._is_blacklisted = False
