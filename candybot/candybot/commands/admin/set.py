@@ -14,5 +14,5 @@ class SetCommand(AdminCommand):
 
     async def _run(self):
         candy_value = CandyValue(self.candy, self.amount)
-        database.set_inv(self.message.guild.id, self.user.id, candy_value)
+        database.set_inv(self.server_id, self.user.id, candy_value)
         await discord.send_embed(self.message.channel, f"You now have {candy_value.small_str} (set by {self.message.author.mention})", author=self.user)

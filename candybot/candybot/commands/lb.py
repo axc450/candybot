@@ -16,7 +16,7 @@ class LeaderboardCommand(Command):
     emojis = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "keycap_ten"]
 
     async def _run(self):
-        invs = database.get_inv(self.message.guild.id)
+        invs = database.get_inv(self.server_id)
         sorted_invs = sorted(invs.items(), key=self._sorting_func, reverse=True)
         lines = await self._generate_lines(sorted_invs, self.candy)
         await self.send("\n".join(lines))

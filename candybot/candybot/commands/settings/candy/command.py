@@ -12,5 +12,5 @@ class CommandCandyCommand(CandySettingsCommand):
     ignore = False
 
     async def _run(self):
-        database.set_settings_candy_command(self.message.guild.id, self.candy.id, self.command)
+        database.set_settings_candy_command(self.server_id, self.candy.id, self.command)
         await self.send(f"{self.candy} pick command has been changed")

@@ -12,5 +12,5 @@ class PrefixCommand(SettingsCommand):
     ignore = False
 
     async def _run(self):
-        database.set_settings_prefix(self.message.guild.id, self.prefix)
+        database.set_settings_prefix(self.server_id, self.prefix)
         await self.send(f"Prefix has been changed to `{self.prefix}`")

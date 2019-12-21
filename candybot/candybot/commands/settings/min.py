@@ -14,5 +14,5 @@ class MinCommand(SettingsCommand):
     async def _run(self):
         if self.amount > self.server_settings.max:
             return
-        database.set_settings_min(self.message.guild.id, self.amount)
+        database.set_settings_min(self.server_id, self.amount)
         await self.send(f"Minimum candy drop has been changed to `{self.amount}`")

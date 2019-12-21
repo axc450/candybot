@@ -22,8 +22,8 @@ class StatsCommand(Command):
         await self.send(fields=fields)
 
     def _get_info(self):
-        server_settings = database.get_settings(self.message.guild.id)
-        channels = database.get_channels(self.message.guild.id)
+        server_settings = database.get_settings(self.server_id)
+        channels = database.get_channels(self.server_id)
         channels = [discord.get_channel(self.message.guild, x).mention for x in channels]
         return "\n".join([
             self._make_field("Version", __main__.VERSION),
@@ -35,8 +35,8 @@ class StatsCommand(Command):
         ])
 
     def _get_candy(self):
-        candy = database.get_stats_candy(self.message.guild.id)
-        shop = database.get_stats_shop(self.message.guild.id)
+        candy = database.get_stats_candy(self.server_id)
+        shop = database.get_stats_shop(self.server_id)
         return "\n".join([
             self._make_field("Candy Dropped", "\n" + candy.list_str),
             self._make_field("Shop Items Bought", shop),

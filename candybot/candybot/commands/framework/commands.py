@@ -49,13 +49,21 @@ class Command:
         raise NotImplementedError
 
     @property
+    def server_id(self):
+        return self.message.guild.id
+
+    @property
+    def author_id(self):
+        return self.message.author.id
+
+    @property
     def is_admin(self):
         if self._is_admin is None:
             if self.message.author.guild_permissions.administrator:
                 self._is_admin = True
             else:
-                admins = database.get_admins(self.message.guild.id)
-                self._is_admin = self.message.author.id in admins
+                admins = database.get_admins(self.server_id)
+                self._is_admin = self.author_id in admins
         return self._is_admin
 
     @property
@@ -64,8 +72,8 @@ class Command:
             if self.message.author.guild_permissions.administrator:
                 self._is_blacklisted = False
             else:
-                blacklist = database.get_blacklist(self.message.guild.id)
-                self._is_blacklisted = self.message.author.id in blacklist
+                blacklist = database.get_blacklist(self.server_id)
+                self._is_blacklisted = self.author_id in blacklist
         return self._is_blacklisted
 
     async def run(self):

@@ -16,7 +16,7 @@ class CandyCommand(Command):
     title = ":candy: Candy"
 
     async def _run(self):
-        candy = database.get_candy(self.message.guild.id)
+        candy = database.get_candy(self.server_id)
         candy_chance = utils.chance_value_to_percent(candy)
         lines = [f"{x.emoji} {x.name} {candy_chance[x]:.2f}%" for x in candy]
         await self.send("\n".join(lines))

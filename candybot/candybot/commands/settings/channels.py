@@ -13,15 +13,15 @@ class ChannelsCommand(SettingsCommand):
 
     # TODO: Ask for confirmation
     async def _run(self):
-        channels = database.get_channels(self.message.guild.id)
+        channels = database.get_channels(self.server_id)
         if self.channel is None:
             self.title = ":hash: CandyBot Channels"
             channels = [(await converters.to_channel(str(x), self.message.guild)).mention for x in channels]
             await self.send("\n".join(channels) if channels else "All")
         else:
             if self.channel.id in channels:
-                database.set_channel(self.message.guild.id, self.channel.id, remove=True)
+                database.set_channel(self.server_id, self.channel.id, remove=True)
                 await self.send(f"{self.channel.mention} was removed as a CandyBot channel")
             else:
-                database.set_channel(self.message.guild.id, self.channel.id, remove=False)
+                database.set_channel(self.server_id, self.channel.id, remove=False)
                 await self.send(f"{self.channel.mention} was added as a CandyBot channel")
