@@ -20,11 +20,11 @@ class PickCommand(Command):
     async def _run(self):
         # Need to obtain the lock to avoid multiple users from picking the candy
         async with engine.STATE_LOCK:
-            state = engine.STATE.get(self.message.channel.id)
+            state = engine.STATE.get(self.channel_id)
             if state and state.command.invocation == self.invocation:
                 # This user will pick up the candy drop
                 # Must clear the state inside the lock to avoid other users from picking
-                del engine.STATE[self.message.channel.id]
+                del engine.STATE[self.channel_id]
             else:
                 # An earlier command was chosen to be processed or the invocation didn't match
                 return

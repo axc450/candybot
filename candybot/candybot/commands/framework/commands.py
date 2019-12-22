@@ -57,6 +57,10 @@ class Command:
         return self.message.author.id
 
     @property
+    def channel_id(self):
+        return self.message.channel.id
+
+    @property
     def is_admin(self):
         if self._is_admin is None:
             if self.message.author.guild_permissions.administrator:
