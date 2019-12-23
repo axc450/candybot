@@ -12,5 +12,7 @@ class MessageCandyCommand(CandySettingsCommand):
     ignore = False
 
     async def _run(self):
-        database.set_settings_candy_message(self.server_id, self.candy.id, self.text)
-        await self.send(f"{self.candy} drop message has been changed")
+        candy = self.args["candy"]
+        text = self.args["text"]
+        database.set_settings_candy_message(self.server_id, candy.id, text)
+        await self.send(f"{candy} drop message has been changed")

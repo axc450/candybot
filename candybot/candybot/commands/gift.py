@@ -15,17 +15,21 @@ class GiftCommand(Command):
 
     # TODO: Reduce database calls in here if possible (use a cache?)
     async def _run(self):
+        user = self.args["user"]
+        amount = self.args["amount"]
+        candy = self.args["candy"]
+
         # Users shouldn't be able to gift themselves...
-        if self.message.author == self.user:
+        if self.message.author == user:
             return
-        invs = database.get_inv(self.server_id, self.author_id, self.user.id)
-        if invs[self.author_id][self.candy] < self.amount:
-            await discord.send_embed(self.message.channel, f"You don't have enough {self.candy}!", author=self.message.author)
+        invs = database.get_inv(self.server_id, self.author_id, user.id)
+        if invs[self.author_id][candy] < amount:
+            await discord.send_embed(self.message.channel, f"You don't have enough {candy}!", author=self.message.author)
         else:
-            candy_value = CandyValue(self.candy, self.amount)
+            candy_value = CandyValue(candy, amount)
             database.set_inv(self.server_id, self.author_id, -candy_value, update=True)
-            database.set_inv(self.server_id, self.user.id, candy_value, update=True)
+            database.set_inv(self.server_id, user.id, candy_value, update=True)
             await discord.send_embed(self.message.channel,
                                      f"You have been gifted {candy_value.small_str} by {self.message.author.mention}\n"
-                                     f"You now have {(invs[self.user.id][self.candy] + candy_value).small_str}",
-                                     author=self.user)
+                                     f"You now have {(invs[user.id][candy] + candy_value).small_str}",
+                                     author=user)

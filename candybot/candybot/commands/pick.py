@@ -13,8 +13,8 @@ class PickCommand(Command):
     admin = False
     ignore = True
 
-    def __init__(self, server_settings, message=None, args=[], invocation=None):
-        super().__init__(server_settings, message, args)
+    def __init__(self, server_settings, message=None, raw_args=[], invocation=None):
+        super().__init__(server_settings, message, raw_args)
         self.invocation = invocation if invocation else "pick"
 
     async def _run(self):

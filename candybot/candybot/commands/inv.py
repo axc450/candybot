@@ -13,6 +13,6 @@ class InvCommand(Command):
     ignore = False
 
     async def _run(self):
-        user = self.user if self.user else self.message.author
+        user = self.args.get("user", self.message.author)
         inv = database.get_inv(self.server_id, user.id)[user.id]
         await discord.send_embed(self.message.channel, inv.list_str, author=user)

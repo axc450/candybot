@@ -13,5 +13,8 @@ class CostCommand(ShopCommand):
     ignore = False
 
     async def _run(self):
-        database.set_shop_cost(self.server_id, self.role.id, self.candy, self.amount)
-        await self.send(f"Updated the cost of {self.role.mention}")
+        role = self.args["role"]
+        candy = self.args["role"]
+        amount = self.args["role"]
+        database.set_shop_cost(self.server_id, role.id, candy, amount)
+        await self.send(f"Updated the cost of {role.mention}")

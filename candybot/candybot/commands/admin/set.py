@@ -13,6 +13,9 @@ class SetCommand(AdminCommand):
     ignore = False
 
     async def _run(self):
-        candy_value = CandyValue(self.candy, self.amount)
-        database.set_inv(self.server_id, self.user.id, candy_value)
-        await discord.send_embed(self.message.channel, f"You now have {candy_value.small_str} (set by {self.message.author.mention})", author=self.user)
+        user = self.args["user"]
+        amount = self.args["amount"]
+        candy = self.args["candy"]
+        candy_value = CandyValue(candy, amount)
+        database.set_inv(self.server_id, user.id, candy_value)
+        await discord.send_embed(self.message.channel, f"You now have {candy_value.small_str} (set by {self.message.author.mention})", author=user)

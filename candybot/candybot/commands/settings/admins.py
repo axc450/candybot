@@ -13,15 +13,16 @@ class AdminsCommand(SettingsCommand):
 
     # TODO: Ask for confirmation
     async def _run(self):
+        user = self.args["user"]
         admins = database.get_admins(self.server_id)
-        if self.user is None:
+        if user is None:
             self.title = ":lifter: CandyBot Admins"
             admins = [(await converters.to_user(str(x), self.message.guild)).mention for x in admins]
             await self.send("\n".join(admins) if admins else "All")
         else:
-            if self.user.id in admins:
-                database.set_admin(self.server_id, self.user.id, remove=True)
-                await self.send(f"{self.user.mention} was removed as a CandyBot admin")
+            if user.id in admins:
+                database.set_admin(self.server_id, user.id, remove=True)
+                await self.send(f"{user.mention} was removed as a CandyBot admin")
             else:
-                database.set_admin(self.server_id, self.user.id, remove=False)
-                await self.send(f"{self.user.mention} was added as a CandyBot admin")
+                database.set_admin(self.server_id, user.id, remove=False)
+                await self.send(f"{user.mention} was added as a CandyBot admin")

@@ -6,16 +6,15 @@ from . import parsers
 
 class Command:
     ignore = True
+    title = None
 
-    def __init__(self, server_settings, message=None, args=[]):
+    def __init__(self, server_settings, message=None, raw_args=[]):
         self.server_settings = server_settings
         self.message = message
-        self.args = args
+        self.raw_args = raw_args
+        self.args = {}
         self._is_admin = None
         self._is_blacklisted = None
-
-    def __getattr__(self, item):
-        return None
 
     @property
     def name(self):
@@ -83,8 +82,7 @@ class Command:
     async def run(self):
         try:
             self._check_run()
-            parsed_args = await parsers.parse_args(self.args, self.argument_spec, self.message.guild)
-            self._set_args(parsed_args)
+            self.args = await parsers.parse_args(self.raw_args, self.argument_spec, self.message.guild)
         # TODO: Check these are correct
         except (CommandError, ArgumentError, IndexError):
             return
@@ -99,11 +97,6 @@ class Command:
             raise CommandError
         if self.is_blacklisted:
             raise CommandError
-
-    def _set_args(self, args):
-        for name in args:
-            arg = args[name]
-            setattr(self, name, arg)
 
     async def send(self, text=None, fields=[]):
         if self.title:
