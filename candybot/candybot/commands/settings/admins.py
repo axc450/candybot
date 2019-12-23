@@ -13,7 +13,7 @@ class AdminsCommand(SettingsCommand):
 
     # TODO: Ask for confirmation
     async def _run(self):
-        user = self.args["user"]
+        user = self.args.get("user")
         admins = database.get_admins(self.server_id)
         if user is None:
             self.title = ":lifter: CandyBot Admins"

@@ -16,7 +16,7 @@ class LeaderboardCommand(Command):
     emojis = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "keycap_ten"]
 
     async def _run(self):
-        candy = self.args["candy"]
+        candy = self.args.get("candy")
         invs = database.get_inv(self.server_id)
         sorted_invs = sorted(invs.items(), key=self._sorting_func, reverse=True)
         lines = await self._generate_lines(sorted_invs, candy)
@@ -47,4 +47,4 @@ class LeaderboardCommand(Command):
         return lines
 
     def _sorting_func(self, x):
-        return x[1][self.args["candy"]] if self.args["candy"] else x[1].total
+        return x[1][self.args.get("candy")] if self.args.get("candy") else x[1].total

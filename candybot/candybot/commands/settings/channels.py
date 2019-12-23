@@ -13,7 +13,7 @@ class ChannelsCommand(SettingsCommand):
 
     # TODO: Ask for confirmation
     async def _run(self):
-        channel = self.args["channel"]
+        channel = self.args.get("channel")
         channels = database.get_channels(self.server_id)
         if channel is None:
             self.title = ":hash: CandyBot Channels"
