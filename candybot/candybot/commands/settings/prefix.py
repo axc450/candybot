@@ -13,5 +13,5 @@ class PrefixCommand(SettingsCommand):
 
     async def _run(self):
         prefix = self.args["prefix"]
-        database.set_settings_prefix(self.server_id, prefix)
+        database.set_settings_prefix(self.server.id, prefix)
         await self.send(f"Prefix has been changed to `{prefix}`")

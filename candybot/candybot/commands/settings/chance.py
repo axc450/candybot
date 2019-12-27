@@ -13,5 +13,5 @@ class ChanceCommand(SettingsCommand):
 
     async def _run(self):
         percent = self.args["percent"]
-        database.set_settings_chance(self.server_id, percent / 100)
+        database.set_settings_chance(self.server.id, percent / 100)
         await self.send(f"Candy proc chance has been changed to {percent}%")

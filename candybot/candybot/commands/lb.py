@@ -17,7 +17,7 @@ class LeaderboardCommand(Command):
 
     async def _run(self):
         candy = self.args.get("candy")
-        invs = database.get_inv(self.server_id)
+        invs = database.get_inv(self.server.id)
         sorted_invs = sorted(invs.items(), key=self._sorting_func, reverse=True)
         lines = await self._generate_lines(sorted_invs, candy)
         await self.send("\n".join(lines))

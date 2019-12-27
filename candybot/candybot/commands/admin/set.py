@@ -17,5 +17,5 @@ class SetCommand(AdminCommand):
         amount = self.args["amount"]
         candy = self.args["candy"]
         candy_value = CandyValue(candy, amount)
-        database.set_inv(self.server_id, user.id, candy_value)
+        database.set_inv(self.server.id, user.id, candy_value)
         await discord.send_embed(self.message.channel, f"You now have {candy_value.small_str} (set by {self.message.author.mention})", author=user)

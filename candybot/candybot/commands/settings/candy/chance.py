@@ -15,7 +15,7 @@ class ChanceCandyCommand(CandySettingsCommand):
     async def _run(self):
         candy = self.args["candy"]
         amount = self.args["amount"]
-        database.set_settings_candy_chance(self.server_id, candy.id, amount)
-        candy = database.get_candy(self.server_id)
+        database.set_settings_candy_chance(self.server.id, candy.id, amount)
+        candy = database.get_candy(self.server.id)
         new_chance = utils.chance_value_to_percent(candy)[candy]
         await self.send(f"{candy} chance has been changed to {new_chance:.2f}%")

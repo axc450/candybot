@@ -14,5 +14,5 @@ class InvCommand(Command):
 
     async def _run(self):
         user = self.args.get("user", self.message.author)
-        inv = database.get_inv(self.server_id, user.id)[user.id]
+        inv = database.get_inv(self.server.id, user.id)[user.id]
         await discord.send_embed(self.message.channel, inv.list_str, author=user)

@@ -14,16 +14,16 @@ class BuyCommand(ShopCommand):
 
     async def _run(self):
         item = self.args["item"]
-        inv = database.get_inv(self.server_id, self.author_id)[self.author_id]
+        inv = database.get_inv(self.server.id, self.author.id)[self.author.id]
         if inv >= item.cost:
             role = discord.get_role(self.message.guild, item.item)
             user = self.message.author
             if role in user.roles:
                 await self.send("You already have that role!")
             else:
-                database.set_inv(self.server_id, self.author_id, -item.cost, update=True)
+                database.set_inv(self.server.id, self.author.id, -item.cost, update=True)
                 await discord.apply_role(self.message.author, role)
-                database.set_stats_shop(self.server_id)
+                database.set_stats_shop(self.server.id)
                 await self.send(f"You have bought the {role.mention} role!")
         else:
             await self.send(f"You need {item.cost.line_str} to buy this item!")

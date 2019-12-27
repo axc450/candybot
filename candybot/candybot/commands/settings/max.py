@@ -15,5 +15,5 @@ class MaxCommand(SettingsCommand):
         amount = self.args["amount"]
         if amount < self.server_settings.min:
             return
-        database.set_settings_max(self.server_id, amount)
+        database.set_settings_max(self.server.id, amount)
         await self.send(f"Maximum candy drop has been changed to `{amount}`")

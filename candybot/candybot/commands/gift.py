@@ -22,13 +22,13 @@ class GiftCommand(Command):
         # Users shouldn't be able to gift themselves...
         if self.message.author == user:
             return
-        invs = database.get_inv(self.server_id, self.author_id, user.id)
-        if invs[self.author_id][candy] < amount:
+        invs = database.get_inv(self.server.id, self.author.id, user.id)
+        if invs[self.author.id][candy] < amount:
             await discord.send_embed(self.message.channel, f"You don't have enough {candy}!", author=self.message.author)
         else:
             candy_value = CandyValue(candy, amount)
-            database.set_inv(self.server_id, self.author_id, -candy_value, update=True)
-            database.set_inv(self.server_id, user.id, candy_value, update=True)
+            database.set_inv(self.server.id, self.author.id, -candy_value, update=True)
+            database.set_inv(self.server.id, user.id, candy_value, update=True)
             await discord.send_embed(self.message.channel,
                                      f"You have been gifted {candy_value.small_str} by {self.message.author.mention}\n"
                                      f"You now have {(invs[user.id][candy] + candy_value).small_str}",

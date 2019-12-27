@@ -15,7 +15,7 @@ class ShowCommand(ShopCommand):
     title = ":dollar: CandyBot Shop"
 
     async def _run(self):
-        shop = database.get_shop(self.server_id)
+        shop = database.get_shop(self.server.id)
         shop_str = await self._shop_to_str(shop)
         await self.send(shop_str)
 

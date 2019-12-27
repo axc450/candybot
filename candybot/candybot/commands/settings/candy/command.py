@@ -14,5 +14,5 @@ class CommandCandyCommand(CandySettingsCommand):
     async def _run(self):
         candy = self.args["candy"]
         command = self.args["command"]
-        database.set_settings_candy_command(self.server_id, candy.id, command)
+        database.set_settings_candy_command(self.server.id, candy.id, command)
         await self.send(f"{candy} pick command has been changed")

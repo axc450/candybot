@@ -14,5 +14,5 @@ class AddCandyCommand(CandySettingsCommand):
     async def _run(self):
         emoji = self.args["emoji"]
         name = self.args["name"]
-        database.set_settings_candy_add(self.server_id, name, emoji)
+        database.set_settings_candy_add(self.server.id, name, emoji)
         await self.send(f"{emoji} has been added!")

@@ -13,5 +13,5 @@ class RemoveCandyCommand(CandySettingsCommand):
 
     async def _run(self):
         candy = self.args["candy"]
-        database.set_settings_candy_remove(self.server_id, candy.id)
+        database.set_settings_candy_remove(self.server.id, candy.id)
         await self.send(f"{candy} has been deleted!")

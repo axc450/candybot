@@ -48,16 +48,16 @@ class Command:
         raise NotImplementedError
 
     @property
-    def server_id(self):
-        return self.message.guild.id
+    def server(self):
+        return self.message.guild
 
     @property
-    def author_id(self):
-        return self.message.author.id
+    def author(self):
+        return self.message.author
 
     @property
-    def channel_id(self):
-        return self.message.channel.id
+    def channel(self):
+        return self.message.channel
 
     @property
     def is_admin(self):
@@ -65,8 +65,8 @@ class Command:
             if self.message.author.guild_permissions.administrator:
                 self._is_admin = True
             else:
-                admins = database.get_admins(self.server_id)
-                self._is_admin = self.author_id in admins
+                admins = database.get_admins(self.server.id)
+                self._is_admin = self.author.id in admins
         return self._is_admin
 
     @property
@@ -75,8 +75,8 @@ class Command:
             if self.message.author.guild_permissions.administrator:
                 self._is_blacklisted = False
             else:
-                blacklist = database.get_blacklist(self.server_id)
-                self._is_blacklisted = self.author_id in blacklist
+                blacklist = database.get_blacklist(self.server.id)
+                self._is_blacklisted = self.author.id in blacklist
         return self._is_blacklisted
 
     async def run(self):

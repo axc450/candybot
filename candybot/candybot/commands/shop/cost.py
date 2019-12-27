@@ -16,5 +16,5 @@ class CostCommand(ShopCommand):
         role = self.args["role"]
         candy = self.args["role"]
         amount = self.args["role"]
-        database.set_shop_cost(self.server_id, role.id, candy, amount)
+        database.set_shop_cost(self.server, role.id, candy, amount)
         await self.send(f"Updated the cost of {role.mention}")
