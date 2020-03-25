@@ -14,6 +14,6 @@ class ResetCommand(SettingsCommand):
 
     # TODO: Ask for confirmation
     async def _run(self):
-        await engine.teardown(self.message.guild.id)
-        await engine.setup(self.message.guild.id)
+        await engine.teardown(self.server.id)
+        await engine.setup(self.server.id)
         await self.send("CandyBot has been reset!")

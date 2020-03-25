@@ -13,4 +13,5 @@ class ProcCommand(AdminCommand):
     ignore = False
 
     async def _run(self):
-        await candybot.engine.proc(self.server_settings, self.message.channel, self.candy, True)
+        candy = self.args["candy"]
+        await candybot.engine.proc(self.server_settings, self.message.channel, candy, True)

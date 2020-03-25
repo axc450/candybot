@@ -148,6 +148,14 @@ def set_settings_max(server, amount):
     DB.commit()
 
 
+def set_settings_cap(server, amount):
+    query = "UPDATE SETTINGS_GENERAL " \
+            "SET cap = ? " \
+            "WHERE server = ?"
+    DB.execute(query, (amount, server))
+    DB.commit()
+
+
 def set_settings_candy_add(server, name, emoji, chance=0):
     query = "INSERT INTO SETTINGS_CANDY VALUES (?, " \
             "IFNULL((SELECT MAX(id)+1 FROM SETTINGS_CANDY WHERE server = ?), 0), " \
