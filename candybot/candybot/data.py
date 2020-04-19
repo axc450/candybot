@@ -1,10 +1,26 @@
 from candybot.engine import Stats, User, Settings, Shop
-from candybot.interface import database
+from candybot.interface import database, cache
+
+
+class ReadRequest:
+    def __init__(self, collection, server=None, one=False, fields=None, query=None):
+        self.collection = collection
+        self.server = server
+        self.one = one
+        self.fields = fields
+        self.query = query
+
+
+class WriteRequest:
+    def __init__(self, collection, server, json):
+        self.collection = collection
+        self.server = server
+        self.json = json
 
 
 def get_settings(server):
-    query = {"_id": server}
-    result = database.read("settings", query, one=True)
+    request = ReadRequest("settings", server=server, one=True)
+    result = _get_data(request)
     if result:
         return Settings.from_json(result)
     settings = Settings.from_default()
@@ -13,38 +29,31 @@ def get_settings(server):
 
 
 def set_settings(server, server_settings):
-    query = {"_id": server}
-    document = {"$set": server_settings.to_json}
-    database.write("settings", query, document, one=True)
+    request = WriteRequest("settings", server, server_settings.to_json)
+    _set_data(request)
 
 
 def get_user(server, user):
-    query = {"_id": user, "invs": {"$elemMatch": {"server": server}}}
-    result = database.read("users", query, one=True)
+    request = ReadRequest("users", server=user, one=True)
+    result = _get_data(request)
     return User.from_json(result, server) if result else User(user, server)
 
 
 def set_user(user):
-    query = {"_id": user.id}
-    document = {"$set": user.to_json}
-    database.write("users", query, document, one=True)
+    request = WriteRequest("users", user.id, user.to_json)
+    _set_data(request)
 
 
 def get_users(server):
-    query = {"invs": {"$elemMatch": {"server": server}}}
-    result = database.read("users", query)
+    request = ReadRequest("users", query={"invs": {"$elemMatch": {"server": server}}})
+    # Always get all users via the database (ie do not cache)
+    result = database.read(request)
     return [User.from_json(x, server) for x in result]
 
 
-# def reset_users(server):
-#     query = {}
-#     document = {"$pull": {"invs": {"server": server}}}
-#     database.write("users", query, document)
-
-
 def get_shop(server) -> Shop:
-    query = {"_id": server}
-    result = database.read("shop", query, one=True)
+    request = ReadRequest("shop", server=server, one=True)
+    result = _get_data(request)
     if result:
         return Shop.from_json(result)
     shop = Shop.from_default()
@@ -53,14 +62,13 @@ def get_shop(server) -> Shop:
 
 
 def set_shop(server, shop):
-    query = {"_id": server}
-    document = {"$set": shop.to_json}
-    database.write("shop", query, document, one=True)
+    request = WriteRequest("shop", server, shop.to_json)
+    _set_data(request)
 
 
 def get_stats(server) -> Stats:
-    query = {"_id": server}
-    result = database.read("stats", query, one=True)
+    request = ReadRequest("stats", server=server, one=True)
+    result = _get_data(request)
     if result:
         return Stats.from_json(result)
     stats = Stats.from_default()
@@ -69,12 +77,31 @@ def get_stats(server) -> Stats:
 
 
 def set_stats(server, stats):
-    query = {"_id": server}
-    document = {"$set": stats.to_json}
-    database.write("stats", query, document, one=True)
+    request = WriteRequest("stats", server, stats.to_json)
+    _set_data(request)
 
 
 def get_donators():
     query = {}
     result = database.read("donators", query)
     return [x["tag"] for x in result]
+
+
+def get_donators():
+    request = ReadRequest("donators")
+    result = _get_data(request)
+    return [x["tag"] for x in result]
+
+
+def _get_data(request):
+    result = cache.read(request)
+    if not result:
+        result = database.read(request)
+        request = WriteRequest(request.collection, request.server, result)
+        cache.write(request)
+    return result
+
+
+def _set_data(request):
+    database.write(request)
+    cache.write(request)

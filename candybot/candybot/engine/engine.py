@@ -16,11 +16,15 @@ async def handle_message(message):
     :param message: The Discord message
     """
 
-    # Firstly, get the settings from the database
+    # Filter the message before getting the server setting
+    if not pre_filter(message):
+        return
+
+    # Get the settings from the database
     server_settings = data.get_settings(message.guild.id)
 
-    # Filter the message if we don't care about it
-    if not filter_message(message, server_settings):
+    # Filter the message after getting the server setting
+    if not post_filter(message, server_settings):
         return
 
     # Check if the message was a command or a normal message and process it accordingly
@@ -30,16 +34,19 @@ async def handle_message(message):
         await handle_candy(message, server_settings)
 
 
-def filter_message(message, server_settings):
+def pre_filter(message):
+    # Ignore any messages from bots
+    if message.author.bot:
+        return False
+    return True
+
+
+def post_filter(message, server_settings):
     """
     Filters out messages
     :param message: The Discord message
     :param server_settings: The server settings
     """
-
-    # Ignore any messages from bots
-    if message.author.bot:
-        return False
 
     # Ignore any messages in channels that CandyBot isn't set up for
     # If no channels are set up, allow every channel
