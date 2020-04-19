@@ -58,7 +58,7 @@ def to_amount(arg, zero_allowed):
 def to_shop_item(arg, server):
     arg = to_amount(arg, False)
     shop = data.get_shop(server.id)
-    if arg > len(shop.items):
+    if arg > len(shop):
         raise ArgumentError
     return arg
 

@@ -7,7 +7,8 @@ async def send_embed(channel, text=None, title=None, color=None, author=None, fi
     if author:
         embed.set_author(name=author.name, icon_url=author.avatar_url)
     for field in fields:
-        embed.add_field(name=f"-- {field[0].capitalize()} --", value=field[1], inline=field[2])
+        if field[1]:
+            embed.add_field(name=f"-- {field[0].capitalize()} --", value=field[1], inline=field[2])
     await channel.send(embed=embed)
 
 
