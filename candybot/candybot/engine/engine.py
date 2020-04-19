@@ -1,6 +1,5 @@
 from asyncio.locks import Lock
-from candybot import exceptions, utils, commands
-from candybot.interface import database
+from candybot import utils, commands, data
 from candybot.engine import CandyValue, CandyDrop
 
 # The current state of channels
@@ -11,27 +10,18 @@ STATE = {}
 STATE_LOCK = Lock()
 
 
-async def setup(guild):
-    database.set_settings(guild, ".", 0.2, 3, 5, 10, 100)
-    database.set_settings_candy_add(guild, "candy", "🍬", 1)
-
-
-async def teardown(guild):
-    database.teardown(guild)
-
-
 async def handle_message(message):
     """
     Handles a Discord Message
     :param message: The Discord message
     """
 
-    # Firstly, filter the message if we don't care about it
-    if not filter_message(message):
-        return
+    # Firstly, get the settings from the database
+    server_settings = data.get_settings(message.guild.id)
 
-    # This message will be processed, so get the settings from the database
-    server_settings = database.get_settings(message.guild.id)
+    # Filter the message if we don't care about it
+    if not filter_message(message, server_settings):
+        return
 
     # Check if the message was a command or a normal message and process it accordingly
     if is_command(message, server_settings.prefix):
@@ -40,10 +30,11 @@ async def handle_message(message):
         await handle_candy(message, server_settings)
 
 
-def filter_message(message):
+def filter_message(message, server_settings):
     """
     Filters out messages
     :param message: The Discord message
+    :param server_settings: The server settings
     """
 
     # Ignore any messages from bots
@@ -52,8 +43,7 @@ def filter_message(message):
 
     # Ignore any messages in channels that CandyBot isn't set up for
     # If no channels are set up, allow every channel
-    channels = database.get_channels(message.guild.id)
-    if channels and message.channel.id not in channels:
+    if server_settings.channels and message.channel.id not in server_settings.channels:
         return False
 
     # This message should be processed
@@ -90,23 +80,16 @@ async def handle_candy(message, server_settings):
     state = STATE.get(message.channel.id)
     if not state:
         if utils.roll(server_settings.chance):
-            candy = get_random_candy(message.guild.id)
-            await proc(server_settings, message.channel, candy, False)
+            weights = [x.chance for x in server_settings.candy]
+            candy_setting = utils.get_choice(server_settings.candy, weights)
+            await proc(server_settings, message.channel, candy_setting, False)
 
 
-def get_random_candy(server):
-    candy = database.get_candy(server)
-    if not candy:
-        raise exceptions.CandyError(f"This server has not set up any Candy")
-    weights = [x.chance for x in candy]
-    return utils.get_choice(candy, weights)
-
-
-async def proc(server_settings, channel, candy, force):
-    command = commands.PickCommand(server_settings, invocation=candy.command)
+async def proc(server_settings, channel, candy_setting, force):
+    command = commands.PickCommand(server_settings, invocation=candy_setting.command)
     value = utils.get_value(server_settings.min, server_settings.max)
-    candy_value = CandyValue(candy, value)
-    candy_drop = CandyDrop(command, candy_value)
+    candy_value = CandyValue(candy_setting.candy, value)
+    candy_drop = CandyDrop(command, candy_setting.text, candy_value)
     # Need to obtain the lock to avoid multiple messages from proccing
     async with STATE_LOCK:
         if force or STATE.get(channel.id) is None:
@@ -117,5 +100,7 @@ async def proc(server_settings, channel, candy, force):
             # An earlier message was chosen to be processed
             return
     # Code here will be run after the lock is released and should handle any additional processing
-    database.set_stats_candy(channel.guild.id, candy_drop.candy_value)
+    stats = data.get_stats(channel.guild.id)
+    stats.candy_dropped += candy_value
+    data.set_stats(channel.guild.id, stats)
     candy_drop.message = await channel.send(candy_drop.drop_str)

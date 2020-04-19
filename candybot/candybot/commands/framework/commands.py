@@ -1,7 +1,8 @@
 from .arguments import ArgumentSpec, CommandArgument
-from candybot.interface import discord, database
+from candybot.interface import discord
 from candybot.exceptions import CommandError, ArgumentError
 from . import parsers
+from ...engine import Settings
 
 
 class Command:
@@ -9,12 +10,10 @@ class Command:
     title = None
 
     def __init__(self, server_settings, message=None, raw_args=[]):
-        self.server_settings = server_settings
+        self.server_settings: Settings = server_settings
         self.message = message
         self.raw_args = raw_args
         self.args = {}
-        self._is_admin = None
-        self._is_blacklisted = None
 
     @property
     def name(self):
@@ -61,28 +60,17 @@ class Command:
 
     @property
     def is_admin(self):
-        if self._is_admin is None:
-            if self.message.author.guild_permissions.administrator:
-                self._is_admin = True
-            else:
-                admins = database.get_admins(self.server.id)
-                self._is_admin = self.author.id in admins
-        return self._is_admin
+        return (self.message.author.guild_permissions.administrator or
+                self.author.id in self.server_settings.admins)
 
     @property
     def is_blacklisted(self):
-        if self._is_blacklisted is None:
-            if self.message.author.guild_permissions.administrator:
-                self._is_blacklisted = False
-            else:
-                blacklist = database.get_blacklist(self.server.id)
-                self._is_blacklisted = self.author.id in blacklist
-        return self._is_blacklisted
+        return self.author.id in self.server_settings.blacklist and not self.is_admin
 
     async def run(self):
         try:
             self._check_run()
-            self.args = await parsers.parse_args(self.raw_args, self.argument_spec, self.message.guild)
+            self.args = await parsers.parse_args(self)
         # TODO: Check these are correct
         except (CommandError, ArgumentError, IndexError):
             return
@@ -103,6 +91,12 @@ class Command:
             await discord.send_embed(self.message.channel, text, title=self.title, color=self.message.guild.me.color, fields=fields)
         else:
             await discord.send_embed(self.message.channel, text, author=self.message.author)
+
+    def add_with_cap(self, a, b):
+        # What the value would be if there was no cap
+        total = a + b
+        # What the value should actually be
+        return b - max(total - self.server_settings.cap, 0)
 
 
 class AdminCommand(Command):

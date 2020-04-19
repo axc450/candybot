@@ -1,4 +1,4 @@
-from candybot.interface import database
+from candybot import data
 from candybot.commands.framework import SettingsCommand, ArgumentSpec, PercentArgument
 
 
@@ -13,5 +13,6 @@ class ChanceCommand(SettingsCommand):
 
     async def _run(self):
         percent = self.args["percent"]
-        database.set_settings_chance(self.server.id, percent / 100)
+        self.server_settings.chance = percent / 100
+        data.set_settings(self.server.id, self.server_settings)
         await self.send(f"Candy proc chance has been changed to {percent}%")

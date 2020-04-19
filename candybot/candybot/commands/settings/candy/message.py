@@ -1,4 +1,4 @@
-from candybot.interface import database
+from candybot import data
 from candybot.commands.framework import CandySettingsCommand, ArgumentSpec, CandyArgument, TextArgument
 
 
@@ -14,5 +14,7 @@ class MessageCandyCommand(CandySettingsCommand):
     async def _run(self):
         candy = self.args["candy"]
         text = self.args["text"]
-        database.set_settings_candy_message(self.server.id, candy.id, text)
+        candy_settings = next(x for x in self.server_settings.candy if x.candy == candy)
+        candy_settings.text = text
+        data.set_settings(self.server.id, self.server_settings)
         await self.send(f"{candy} drop message has been changed")

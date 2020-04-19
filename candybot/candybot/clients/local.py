@@ -1,7 +1,7 @@
 import asyncio
 import traceback
-from candybot import engine
-from candybot.interface import discord, converters
+from candybot import engine, converters
+from candybot.interface import discord
 
 GUILD_ID = 1
 USER_ID = 2

@@ -1,4 +1,4 @@
-from candybot.interface import database
+from candybot import data
 from candybot.commands.framework import SettingsCommand, ArgumentSpec, AmountArgument
 
 
@@ -13,5 +13,6 @@ class CapCommand(SettingsCommand):
 
     async def _run(self):
         amount = self.args["amount"]
-        database.set_settings_cap(self.server.id, amount)
+        self.server_settings.cap = amount
+        data.set_settings(self.server.id, self.server_settings)
         await self.send(f"Candy cap been changed to `{amount}`")

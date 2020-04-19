@@ -1,4 +1,4 @@
-from candybot.interface import database
+from candybot import data
 from candybot.commands.framework import CandySettingsCommand, ArgumentSpec, CandyArgument, CommandNameArgument
 
 
@@ -14,5 +14,7 @@ class CommandCandyCommand(CandySettingsCommand):
     async def _run(self):
         candy = self.args["candy"]
         command = self.args["command"]
-        database.set_settings_candy_command(self.server.id, candy.id, command)
+        candy_settings = next(x for x in self.server_settings.candy if x.candy == candy)
+        candy_settings.command = command
+        data.set_settings(self.server.id, self.server_settings)
         await self.send(f"{candy} pick command has been changed")

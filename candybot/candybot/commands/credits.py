@@ -1,4 +1,4 @@
-from candybot.interface import database
+from candybot import data
 from candybot.commands.framework import Command, ArgumentSpec
 
 
@@ -18,7 +18,7 @@ class CreditsCommand(Command):
     github = "https://github.com/axc450/CandyBot"
 
     async def _run(self):
-        donators = database.get_donators()
+        donators = data.get_donators()
         donators_list_1 = "\n".join(donators[:len(donators)//2])
         donators_list_2 = "\n".join(donators[len(donators)//2:])
         credits_str = ":candy: CandyBot Created By **Super#0010**\n" \

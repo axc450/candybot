@@ -1,4 +1,4 @@
-from candybot.interface import database, converters
+from candybot import data, converters
 from candybot.commands.framework import SettingsCommand, ArgumentSpec, UserArgument
 
 
@@ -11,18 +11,19 @@ class AdminsCommand(SettingsCommand):
     clean = True
     ignore = False
 
-    # TODO: Ask for confirmation
     async def _run(self):
         user = self.args.get("user")
-        admins = database.get_admins(self.server.id)
+        admins = self.server_settings.admins
         if user is None:
             self.title = ":lifter: CandyBot Admins"
             admins = [(await converters.to_user(str(x), self.message.guild)).mention for x in admins]
-            await self.send("\n".join(admins) if admins else "All")
+            await self.send("\n".join(admins))
         else:
             if user.id in admins:
-                database.set_admin(self.server.id, user.id, remove=True)
-                await self.send(f"{user.mention} was removed as a CandyBot admin")
+                self.server_settings.admins.remove(user.id)
+                msg = f"{user.mention} was removed as a CandyBot admin"
             else:
-                database.set_admin(self.server.id, user.id, remove=False)
-                await self.send(f"{user.mention} was added as a CandyBot admin")
+                self.server_settings.admins.add(user.id)
+                msg = f"{user.mention} was added as a CandyBot admin"
+            data.set_settings(self.server.id, self.server_settings)
+            await self.send(msg)

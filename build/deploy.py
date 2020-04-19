@@ -10,7 +10,6 @@ def main():
     stop()
     uninstall()
     install()
-    migrate()
     start()
     clean()
 
@@ -38,11 +37,6 @@ def install():
     print("Installing new version")
     with ZipFile("package.zip", "r") as f:
         f.extractall()
-
-
-def migrate():
-    print("Migrating database")
-    subprocess.call(f"{sys.executable} dbscripts/migrate.py", shell=True)
 
 
 def start():

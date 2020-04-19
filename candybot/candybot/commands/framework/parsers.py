@@ -18,9 +18,9 @@ def resolve_command(root_command, args, leaf):
     return None, args
 
 
-async def parse_args(args, spec, server):
-    match = find_match(args, spec)
-    return await parse_match(match, server)
+async def parse_args(command):
+    match = find_match(command.raw_args, command.argument_spec)
+    return await parse_match(match, command)
 
 
 def find_match(args, spec):
@@ -42,5 +42,5 @@ def find_match(args, spec):
     return match
 
 
-async def parse_match(match, server):
-    return {x.name: await x.parse(y, server) for x, y in match.items()}
+async def parse_match(match, command):
+    return {x.name: await x.parse(y, command) for x, y in match.items()}

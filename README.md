@@ -20,7 +20,7 @@ You can host CandyBot yourself to have a private version of the bot.
 Requirements:
 ```
 Python 3.7+
-SQLite 3.24+
+MongoDB 4+
 ```
 
 To run CandyBot yourself:
@@ -28,9 +28,15 @@ To run CandyBot yourself:
 - Download a version of CandyBot [here](https://github.com/axc450/CandyBot/releases).
 - If you want to run CandyBot from a different folder from where you extracted the ZIP, you can run `build/package.py` to generate another ZIP which just contains everything needed to run the bot (which you can then extract somewhere else).
 - Run `pip install -r requirements.txt` to install everything the bot needs to run.
-- Run `dbscripts/create.py` to create an empty database for CandyBot to use.
-- Create a file called `token` which contains the Discord token for your bot.
-- Start CandyBot with `python candybot`!
+- Create a file called `settings.json` with the following form:
+```
+{
+  "discord_token": "",
+  "db_connection_string": "",
+  "db_database": ""
+}
+```
+Then start CandyBot with `python candybot`!
 
 ## For Developers
 

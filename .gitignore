@@ -3,5 +3,4 @@ __pycache__
 package.zip
 
 # Required files
-token
-db
+settings.json

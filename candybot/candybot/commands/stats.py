@@ -1,5 +1,6 @@
 import __main__
-from candybot.interface import discord, database
+from candybot import data
+from candybot.interface import discord
 from candybot.commands.framework import Command, ArgumentSpec
 
 
@@ -22,24 +23,21 @@ class StatsCommand(Command):
         await self.send(fields=fields)
 
     def _get_info(self):
-        server_settings = database.get_settings(self.server.id)
-        channels = database.get_channels(self.server.id)
-        channels = [discord.get_channel(self.message.guild, x).mention for x in channels]
+        channels = [discord.get_channel(self.message.guild, x).mention for x in self.server_settings.channels]
         return "\n".join([
             self._make_field("Version", __main__.VERSION),
-            self._make_field("Command Prefix", f"`{server_settings.prefix}`"),
-            self._make_field("Drop Chance", f"{server_settings.chance * 100:.2f}%"),
-            self._make_field("Drop Amount", f"{server_settings.min}-{server_settings.max}"),
-            self._make_field("Candy Cap", server_settings.cap),
+            self._make_field("Command Prefix", f"`{self.server_settings.prefix}`"),
+            self._make_field("Drop Chance", f"{self.server_settings.chance * 100:.2f}%"),
+            self._make_field("Drop Amount", f"{self.server_settings.min}-{self.server_settings.max}"),
+            self._make_field("Candy Cap", self.server_settings.cap),
             self._make_field("Channels", ("\n" + "\n".join(channels)) if channels else "All")
         ])
 
     def _get_candy(self):
-        candy = database.get_stats_candy(self.server.id)
-        shop = database.get_stats_shop(self.server.id)
+        stats = data.get_stats(self.server.id)
         return "\n".join([
-            self._make_field("Candy Dropped", "\n" + candy.list_str),
-            self._make_field("Shop Items Bought", shop),
+            self._make_field("Candy Dropped", "\n" + stats.candy_dropped.list_str),
+            self._make_field("Shop Items Bought", stats.shop_items_bought)
         ])
 
     @staticmethod

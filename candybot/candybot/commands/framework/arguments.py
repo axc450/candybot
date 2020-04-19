@@ -1,4 +1,4 @@
-from candybot.interface import converters
+from candybot import converters
 
 
 # TODO: Define a get index to get the args?
@@ -35,7 +35,7 @@ class Argument:
         raise NotImplementedError
 
     @staticmethod
-    def parse(arg, server):
+    def parse(arg, command):
         raise NotImplementedError
 
 
@@ -45,7 +45,7 @@ class TextArgument(Argument):
     ignore_spaces = True
 
     @staticmethod
-    async def parse(arg, server):
+    async def parse(arg, command):
         # TODO: Maybe do some validation here
         return arg
 
@@ -55,7 +55,7 @@ class NameArgument(Argument):
     help = "Name of the candy"
 
     @staticmethod
-    async def parse(arg, server):
+    async def parse(arg, command):
         # TODO: Maybe do some validation here
         return arg
 
@@ -65,8 +65,8 @@ class UserArgument(Argument):
     help = "Mention, Tag or ID of a Discord user"
 
     @staticmethod
-    async def parse(arg, server):
-        return await converters.to_user(arg, server)
+    async def parse(arg, command):
+        return await converters.to_user(arg, command.server)
 
 
 class ChannelArgument(Argument):
@@ -74,8 +74,8 @@ class ChannelArgument(Argument):
     help = "Mention, Name or ID of a Discord channel"
 
     @staticmethod
-    async def parse(arg, server):
-        return await converters.to_channel(arg, server)
+    async def parse(arg, command):
+        return await converters.to_channel(arg, command.server)
 
 
 class RoleArgument(Argument):
@@ -83,8 +83,8 @@ class RoleArgument(Argument):
     help = "Mention, Name or ID of a Discord role"
 
     @staticmethod
-    async def parse(arg, server):
-        return await converters.to_role(arg, server)
+    async def parse(arg, command):
+        return await converters.to_role(arg, command.server)
 
 
 class CommandArgument(Argument):
@@ -93,7 +93,7 @@ class CommandArgument(Argument):
     ignore_spaces = True
 
     @staticmethod
-    async def parse(arg, server):
+    async def parse(arg, command):
         return converters.to_command(arg)
 
 
@@ -102,7 +102,7 @@ class CommandNameArgument(Argument):
     help = "CandyBot command"
 
     @staticmethod
-    async def parse(arg, server):
+    async def parse(arg, command):
         return converters.to_command_name(arg)
 
 
@@ -111,8 +111,8 @@ class CandyArgument(Argument):
     help = "Candy emoji or name"
 
     @staticmethod
-    async def parse(arg, server):
-        return converters.to_candy(arg, server)
+    async def parse(arg, command):
+        return converters.to_candy(arg, command.server_settings.candy)
 
 
 class AmountArgument(Argument):
@@ -120,13 +120,13 @@ class AmountArgument(Argument):
     help = "Amount of candy"
 
     @staticmethod
-    async def parse(arg, server):
+    async def parse(arg, command):
         return converters.to_amount(arg, True)
 
 
 class ZeroAmountArgument(AmountArgument):
     @staticmethod
-    async def parse(arg, server):
+    async def parse(arg, command):
         return converters.to_amount(arg, False)
 
 
@@ -135,8 +135,8 @@ class ShopItemArgument(Argument):
     help = "Shop item ID"
 
     @staticmethod
-    async def parse(arg, server):
-        return converters.to_shop_item(arg, server)
+    async def parse(arg, command):
+        return converters.to_shop_item(arg, command.server)
 
 
 class PercentArgument(Argument):
@@ -144,7 +144,7 @@ class PercentArgument(Argument):
     help = "Percentage"
 
     @staticmethod
-    async def parse(arg, server):
+    async def parse(arg, command):
         return converters.to_percent(arg)
 
 
@@ -153,7 +153,7 @@ class PrefixArgument(Argument):
     help = "Prefix"
 
     @staticmethod
-    async def parse(arg, server):
+    async def parse(arg, command):
         return converters.to_prefix(arg)
 
 
@@ -162,5 +162,5 @@ class EmojiArgument(Argument):
     help = "Emoji"
 
     @staticmethod
-    async def parse(arg, server):
-        return await converters.to_emoji(arg, server)
+    async def parse(arg, command):
+        return await converters.to_emoji(arg, command.server)

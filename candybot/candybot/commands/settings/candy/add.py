@@ -1,4 +1,5 @@
-from candybot.interface import database
+from candybot import data
+from candybot.engine import Candy, CandySettings
 from candybot.commands.framework import CandySettingsCommand, ArgumentSpec, EmojiArgument, NameArgument
 
 
@@ -14,5 +15,11 @@ class AddCandyCommand(CandySettingsCommand):
     async def _run(self):
         emoji = self.args["emoji"]
         name = self.args["name"]
-        database.set_settings_candy_add(self.server.id, name, emoji)
-        await self.send(f"{emoji} has been added!")
+        candy = Candy(name, emoji)
+        candy_settings = CandySettings(candy)
+        if candy in [x.candy for x in self.server_settings.candy]:
+            await self.send("This candy already exists!")
+        else:
+            self.server_settings.candy.append(candy_settings)
+            data.set_settings(self.server.id, self.server_settings)
+            await self.send(f"{candy} has been added!")

@@ -1,5 +1,4 @@
 from candybot import utils
-from candybot.interface import database
 from candybot.commands.framework import Command, ArgumentSpec
 
 
@@ -16,7 +15,7 @@ class CandyCommand(Command):
     title = ":candy: Candy"
 
     async def _run(self):
-        candy = database.get_candy(self.server.id)
-        candy_chance = utils.chance_value_to_percent(candy)
-        lines = [f"{x.emoji} {x.name} {candy_chance[x]:.2f}%" for x in candy]
+        candy_settings = self.server_settings.candy
+        candy_chance = utils.chance_value_to_percent(candy_settings)
+        lines = [f"{x.emoji} {x.name} {y:.2f}%" for x, y in candy_chance]
         await self.send("\n".join(lines))

@@ -1,4 +1,4 @@
-from candybot.interface import database, converters
+from candybot import data, converters
 from candybot.commands.framework import AdminCommand, ArgumentSpec, UserArgument
 
 
@@ -13,15 +13,17 @@ class BlacklistCommand(AdminCommand):
     
     async def _run(self):
         user = self.args.get("user")
-        blacklist = database.get_blacklist(self.server.id)
+        blacklist = self.server_settings.blacklist
         if user is None:
             self.title = ":lock: CandyBot Blacklist"
             blacklist = [(await converters.to_user(str(x), self.message.guild)).mention for x in blacklist]
             await self.send("\n".join(blacklist))
         else:
             if user.id in blacklist:
-                database.set_blacklist(self.server.id, user.id, remove=True)
-                await self.send(f"{user.mention} was removed from the CandyBot blacklist")
+                self.server_settings.blacklist.remove(user.id)
+                msg = f"{user.mention} was removed from the CandyBot blacklist"
             else:
-                database.set_blacklist(self.server.id, user.id, remove=False)
-                await self.send(f"{user.mention} was added to the CandyBot blacklist")
+                self.server_settings.blacklist.append(user.id)
+                msg = f"{user.mention} was added to the CandyBot blacklist"
+            data.set_settings(self.server.id, self.server_settings)
+            await self.send(msg)

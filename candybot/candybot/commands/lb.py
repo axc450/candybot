@@ -1,4 +1,5 @@
-from candybot.interface import database, converters
+from candybot import data, converters
+from candybot.engine import CandyValue
 from candybot.commands.framework import Command, ArgumentSpec, CandyArgument
 
 
@@ -17,34 +18,37 @@ class LeaderboardCommand(Command):
 
     async def _run(self):
         candy = self.args.get("candy")
-        invs = database.get_inv(self.server.id)
-        sorted_invs = sorted(invs.items(), key=self._sorting_func, reverse=True)
-        lines = await self._generate_lines(sorted_invs, candy)
+        users = data.get_users(self.server.id)
+        sorted_users = sorted(users, key=self._sorting_func, reverse=True)
+        lines = await self._generate_lines(sorted_users, candy)
         await self.send("\n".join(lines))
 
-    async def _generate_lines(self, sorted_invs, candy):
+    async def _generate_lines(self, sorted_users, candy):
         lines = []
         max_lines = len(self.emojis)
-        for i, (user, inv) in enumerate(sorted_invs):
+        for i, user in enumerate(sorted_users):
             # Break when we run out of emojis (ie. only show top 10)
             if i == max_lines:
                 break
-            # If the user didn't have any candy, exclude them from the leaderboard:
-            if not inv:
+            # If the user didn't have any candy, exclude them from the leaderboard
+            # The case where a user has candy but none of the given candy is checked later
+            if not user.inv:
                 continue
             # If the user couldn't be found, exclude them from the leaderboard
-            u = await converters.to_user(str(user), self.message.guild)
+            u = await converters.to_user(str(user.id), self.message.guild)
             if u is None:
                 continue
             # Add a leaderboard line
             if candy is None:
-                lines.append(f":{self.emojis[i]}: {u.mention} {inv.line_str}")
+                # No given candy
+                lines.append(f":{self.emojis[i]}: {u.mention} {user.inv.line_str}")
             else:
-                v = inv[candy]
-                if v:
-                    v = f"{candy} x **{v:,}**"
-                    lines.append(f":{self.emojis[i]}: {u.mention} {v}")
+                # Specific candy given
+                value = user.inv[candy]
+                if value:
+                    lines.append(f":{self.emojis[i]}: {u.mention} {CandyValue(candy, value).small_str}")
         return lines
 
     def _sorting_func(self, x):
-        return x[1][self.args.get("candy")] if self.args.get("candy") else x[1].total
+        candy = self.args.get("candy")
+        return x.inv[candy] if candy else x.inv.total

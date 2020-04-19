@@ -1,4 +1,4 @@
-from candybot.interface import database
+from candybot import data
 from candybot.commands.framework import SettingsCommand, ArgumentSpec, PrefixArgument
 
 
@@ -13,5 +13,6 @@ class PrefixCommand(SettingsCommand):
 
     async def _run(self):
         prefix = self.args["prefix"]
-        database.set_settings_prefix(self.server.id, prefix)
+        self.server_settings.prefix = prefix
+        data.set_settings(self.server.id, self.server_settings)
         await self.send(f"Prefix has been changed to `{prefix}`")

@@ -1,4 +1,5 @@
-from candybot import engine
+from candybot import data
+from candybot.engine import Settings, Shop, Stats
 from candybot.commands.framework import SettingsCommand, ArgumentSpec
 
 
@@ -14,6 +15,11 @@ class ResetCommand(SettingsCommand):
 
     # TODO: Ask for confirmation
     async def _run(self):
-        await engine.teardown(self.server.id)
-        await engine.setup(self.server.id)
+        data.set_settings(self.server.id, Settings.from_default())
+        data.set_shop(self.server.id, Shop.from_default())
+        data.set_stats(self.server.id, Stats.from_default())
+        users = data.get_users(self.server.id)
+        for user in users:
+            user.remove_inv()
+            data.set_user(user)
         await self.send("CandyBot has been reset!")

@@ -1,4 +1,4 @@
-from candybot.interface import database, converters
+from candybot import data, converters
 from candybot.commands.framework import SettingsCommand, ArgumentSpec, ChannelArgument
 
 
@@ -11,18 +11,19 @@ class ChannelsCommand(SettingsCommand):
     clean = True
     ignore = False
 
-    # TODO: Ask for confirmation
     async def _run(self):
         channel = self.args.get("channel")
-        channels = database.get_channels(self.server.id)
+        channels = self.server_settings.channels
         if channel is None:
             self.title = ":hash: CandyBot Channels"
             channels = [(await converters.to_channel(str(x), self.message.guild)).mention for x in channels]
             await self.send("\n".join(channels) if channels else "All")
         else:
             if channel.id in channels:
-                database.set_channel(self.server.id, channel.id, remove=True)
-                await self.send(f"{channel.mention} was removed as a CandyBot channel")
+                self.server_settings.channels.remove(channel.id)
+                msg = f"{channel.mention} was removed as a CandyBot channel"
             else:
-                database.set_channel(self.server.id, channel.id, remove=False)
-                await self.send(f"{channel.mention} was added as a CandyBot channel")
+                self.server_settings.channels.add(channel.id)
+                msg = f"{channel.mention} was added as a CandyBot channel"
+            data.set_settings(self.server.id, self.server_settings)
+            await self.send(msg)

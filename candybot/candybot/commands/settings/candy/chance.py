@@ -1,5 +1,4 @@
-from candybot import utils
-from candybot.interface import database
+from candybot import utils, data
 from candybot.commands.framework import CandySettingsCommand, ArgumentSpec, CandyArgument, AmountArgument
 
 
@@ -15,7 +14,8 @@ class ChanceCandyCommand(CandySettingsCommand):
     async def _run(self):
         candy = self.args["candy"]
         amount = self.args["amount"]
-        database.set_settings_candy_chance(self.server.id, candy.id, amount)
-        candy = database.get_candy(self.server.id)
-        new_chance = utils.chance_value_to_percent(candy)[candy]
+        candy_settings = next(x for x in self.server_settings.candy if x.candy == candy)
+        candy_settings.chance = amount
+        data.set_settings(self.server.id, self.server_settings)
+        new_chance = utils.chance_value_to_percent(self.server_settings.candy, candy)
         await self.send(f"{candy} chance has been changed to {new_chance:.2f}%")

@@ -1,8 +1,18 @@
+"""
+Migrates a CandyBot SQL database into a Mongo Database
+"""
+
 import sqlite3
 
-NAME = "db"
+from __main__ import SETTINGS
+from candybot import data
+from candybot.interface import database
 
-db = sqlite3.connect(NAME)
-v = db.execute(f"PRAGMA user_version").fetchone()[0]
 
-db.close()
+# Connect to databases
+sql = sqlite3.connect("db")
+database.connect(SETTINGS["db_connection_string"], SETTINGS["db_database"])
+
+# TODO: Make migration script
+
+sql.close()

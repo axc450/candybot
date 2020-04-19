@@ -1,5 +1,7 @@
 from asynctest import TestCase, CoroutineMock
 from unittest.mock import Mock, MagicMock, patch
+
+from candybot.commands import Command
 from candybot.commands.framework import parse_command, parse_args
 
 
@@ -71,19 +73,22 @@ class Args(TestCase):
         expected = {spec.args[0].name: spec.args[0].parse.return_value,
                     spec.args[1].name: spec.args[1].parse.return_value,
                     spec.args[2].name: spec.args[2].parse.return_value}
-        result = await parse_args(args, spec, "server")
+        command = Mock(spec=Command, raw_args=args, argument_spec=spec)
+        result = await parse_args(command)
         self.assertEqual(result, expected)
 
     async def test_incorrect_number_of_args(self):
         spec = self.mock_spec([self.mock_argument(), self.mock_argument(), self.mock_argument()])
         for args in [["a", "b"], ["a", "b", "c", "d"], []]:
             with self.subTest(args=args):
-                await self.assertAsyncRaises(IndexError, parse_args(args, spec, "server"))
+                command = Mock(spec=Command, raw_args=args, argument_spec=spec)
+                await self.assertAsyncRaises(IndexError, parse_args(command))
 
     async def test_no_args(self):
         spec = self.mock_spec()
         spec.args = []
-        result = await parse_args([], spec, "server")
+        command = Mock(spec=Command, raw_args=[], argument_spec=spec)
+        result = await parse_args(command)
         self.assertEqual(result, {})
 
     async def test_optional_last_arg(self):
@@ -93,13 +98,15 @@ class Args(TestCase):
         expected = {spec.args[0].name: spec.args[0].parse.return_value,
                     spec.args[1].name: spec.args[1].parse.return_value,
                     spec.args[2].name: spec.args[2].parse.return_value}
-        result = await parse_args(args, spec, "server")
+        command = Mock(spec=Command, raw_args=args, argument_spec=spec)
+        result = await parse_args(command)
         self.assertEqual(result, expected)
 
         args = ["a", "b"]
         expected = {spec.args[0].name: spec.args[0].parse.return_value,
                     spec.args[1].name: spec.args[1].parse.return_value}
-        result = await parse_args(args, spec, "server")
+        command = Mock(spec=Command, raw_args=args, argument_spec=spec)
+        result = await parse_args(command)
         self.assertEqual(result, expected)
 
     async def test_ignore_spaces(self):
@@ -109,6 +116,7 @@ class Args(TestCase):
         expected = {spec.args[0].name: spec.args[0].parse.return_value,
                     spec.args[1].name: spec.args[1].parse.return_value,
                     spec.args[2].name: spec.args[2].parse.return_value}
-        result = await parse_args(args, spec, "server")
+        command = Mock(spec=Command, raw_args=args, argument_spec=spec)
+        result = await parse_args(command)
         self.assertEqual(result, expected)
-        spec.args[2].parse.assert_called_once_with("c d", "server")
+        spec.args[2].parse.assert_called_once_with("c d", command)

@@ -1,4 +1,4 @@
-from candybot.interface import database
+from candybot import data
 from candybot.commands.framework import SettingsCommand, ArgumentSpec, AmountArgument
 
 
@@ -15,5 +15,6 @@ class MinCommand(SettingsCommand):
         amount = self.args["amount"]
         if amount > self.server_settings.max:
             return
-        database.set_settings_min(self.server.id, amount)
+        self.server_settings.min = amount
+        data.set_settings(self.server.id, self.server_settings)
         await self.send(f"Minimum candy drop has been changed to `{amount}`")

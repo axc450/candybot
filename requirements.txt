@@ -1,3 +1,4 @@
+pymongo[tls,srv]
 discord
 emoji
 unittest-xml-reporting

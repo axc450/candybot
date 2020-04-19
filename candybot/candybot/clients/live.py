@@ -1,7 +1,6 @@
 import discord
 import __main__
 from candybot import engine
-from candybot.interface import files
 
 BOT = None
 
@@ -16,19 +15,10 @@ class CandyBot(discord.Client):
     async def on_message(message):
         await engine.handle_message(message)
 
-    @staticmethod
-    async def on_guild_join(guild):
-        await engine.setup(guild.id)
-
-    @staticmethod
-    async def on_guild_leave(guild):
-        await engine.teardown(guild.id)
-
 
 def start():
     global BOT
-    token = files.load_token()
     activity = discord.Game(f"CandyBot {__main__.VERSION}")
     BOT = CandyBot(activity=activity)
     print("Connecting to Discord...")
-    BOT.run(token)
+    BOT.run(__main__.SETTINGS["discord_token"])
