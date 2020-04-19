@@ -18,7 +18,6 @@ def disconnect():
 
 
 def read(request):
-    print("DB READ " + request.collection)
     if request.query:
         query = request.query
     else:
@@ -30,7 +29,6 @@ def read(request):
 
 
 def write(request):
-    print("DB WRITE " + request.collection)
     query = {"_id": request.server}
     document = {"$set": request.json}
     _DB[request.collection].update_one(query, document, upsert=True)
