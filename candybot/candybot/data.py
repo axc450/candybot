@@ -72,7 +72,7 @@ def get_stats(server) -> Stats:
     if result:
         return Stats.from_json(result)
     stats = Stats.from_default()
-    set_settings(server, stats)
+    set_stats(server, stats)
     return stats
 
 
