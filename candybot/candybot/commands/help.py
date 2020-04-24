@@ -14,7 +14,7 @@ class HelpCommand(Command):
     title = ":question: CandyBot Help"
 
     async def _run(self):
-        command = self.args[0]
+        command = self.args[0] if self.args[0] else Command
         if self.ignore_command(command):
             return
         if command.subcommands:
