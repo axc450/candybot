@@ -65,7 +65,7 @@ class CandyValue:
         self.value = value
 
     def __repr__(self):
-        return f"{self.value:,} {self.candy}"
+        return self.small_str
 
     def __neg__(self):
         return CandyValue(self.candy, -self.value)

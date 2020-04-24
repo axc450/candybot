@@ -24,23 +24,33 @@ async def parse_args(command):
 
 
 def find_match(args, spec):
-    match = {}
+    match = []
     i = 0
     arg_type = None
     for i, arg_type in enumerate(spec):
         try:
-            match[arg_type] = args[i]
+            match.append(args[i])
         except IndexError:
+            # We ran of of args (ie the args given < spec length)
             if len(spec) - 1 == i and spec.optional:
                 return match
             raise
+    # If we have more args left (ie the args given > spec length)
     if len(args) > i + 1:
         if arg_type and arg_type.ignore_spaces:
-            match[arg_type] = " ".join(args[i:])
+            match[-1] = " ".join(args[i:])
         else:
             raise IndexError
     return match
 
 
 async def parse_match(match, command):
-    return {x.name: await x.parse(y, command) for x, y in match.items()}
+    result = {}
+    for i, arg in enumerate(match):
+        arg_type = command.argument_spec[i]
+        key = arg_type.name
+        if key in result:
+            suffix = len(list(x for x in result if x.startswith(key))) + 1
+            key = f"{key}_{suffix}"
+        result[key] = await arg_type.parse(arg, command)
+    return result

@@ -1,11 +1,12 @@
 from typing import List
-from candybot.engine import CandyCollection
+from candybot.engine import CandyCollection, CandyValue
 
 
 class Shop:
-    def __init__(self, items):
-        self.roles: List[Role] = items
-        self._all = self.roles
+    def __init__(self, roles, conversions):
+        self.roles: List[Role] = roles
+        self.conversions: List[Conversion] = conversions
+        self._all = roles + conversions
 
     def __getitem__(self, item):
         return self._all[item - 1]
@@ -16,25 +17,41 @@ class Shop:
     def __len__(self):
         return len(self._all)
 
+    @property
+    def all(self):
+        i = 1
+        result = {"roles": [], "conversions": []}
+        for item in self.roles:
+            result["roles"].append((i, item))
+            i += 1
+        for item in self.conversions:
+            result["conversions"].append((i, item))
+            i += 1
+        return result
+
     def remove_item(self, item):
         del self._all[item - 1]
 
     def remove_candy(self, candy):
-        for item in list(self):
+        for item in self._all:
             item.remove_candy(candy)
 
     @classmethod
     def from_default(cls):
-        return cls([])
+        return cls([], [])
 
     @classmethod
     def from_json(cls, json):
-        return cls([Role.from_json(x) for x in json["roles"]])
+        return cls(
+            [Role.from_json(x) for x in json["roles"]],
+            [Conversion.from_json(x) for x in json["conversions"]]
+        )
 
     @property
     def to_json(self):
         return {
-            "roles": [x.to_json for x in self.roles]
+            "roles": [x.to_json for x in self.roles],
+            "conversions": [x.to_json for x in self.conversions]
         }
 
 
@@ -57,5 +74,28 @@ class Role:
     def to_json(self):
         return {
             "item": self.item,
+            "cost": self.cost.to_json
+        }
+
+
+class Conversion:
+    def __init__(self, candy_value, cost=None):
+        self.candy_value: CandyValue = candy_value
+        self.cost: CandyCollection = cost if cost else CandyCollection()
+
+    def __str__(self):
+        return f"{self.cost.line_str} :arrow_right: {self.candy_value.small_str}"
+
+    @classmethod
+    def from_json(cls, json):
+        return cls(
+            candy_value=CandyValue.from_json(json["candy_value"]),
+            cost=CandyCollection.from_json(json["cost"])
+        )
+
+    @property
+    def to_json(self):
+        return {
+            "candy_value": self.candy_value.to_json,
             "cost": self.cost.to_json
         }

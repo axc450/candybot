@@ -17,12 +17,21 @@ class ShowCommand(ShopCommand):
 
     async def _run(self):
         shop = data.get_shop(self.server.id)
-        roles = await self.get_roles(shop)
-        await self.send(fields=[("Roles", roles, True)])
+        shop_all = shop.all
+        roles = await self.get_roles(shop_all["roles"])
+        conversions = self.get_conversions(shop_all["conversions"])
+        await self.send(fields=[("Roles", roles, True),
+                                ("Conversions", conversions, True)])
 
-    async def get_roles(self, shop):
+    async def get_roles(self, roles):
         lines = []
-        for i, item in enumerate(shop.roles):
+        for position, item in roles:
             role = discord.get_role(self.message.guild, item.item)
-            lines.append(f"[**{i+1}**] {role.mention} {item.cost.line_str}")
+            lines.append(f"[**{position}**] {role.mention} {item.cost.line_str}")
+        return "\n".join(lines)
+
+    def get_conversions(self, conversions):
+        lines = []
+        for position, item in conversions:
+            lines.append(f"[**{position}**] {item}")
         return "\n".join(lines)

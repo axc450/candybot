@@ -64,6 +64,7 @@ class Args(TestCase):
     def mock_spec(args=[], optional=False):
         spec = MagicMock(optional=optional, args=args)
         spec.__iter__.return_value = spec.args
+        spec.__getitem__ = lambda _, x: args[x]
         spec.__len__.return_value = len(spec.args)
         return spec
 
@@ -73,6 +74,17 @@ class Args(TestCase):
         expected = {spec.args[0].name: spec.args[0].parse.return_value,
                     spec.args[1].name: spec.args[1].parse.return_value,
                     spec.args[2].name: spec.args[2].parse.return_value}
+        command = Mock(spec=Command, raw_args=args, argument_spec=spec)
+        result = await parse_args(command)
+        self.assertEqual(result, expected)
+
+    async def test_duplicate_argument_types(self):
+        mock_argument = self.mock_argument()
+        mock_argument.name = "arg"
+        spec = self.mock_spec([mock_argument, mock_argument])
+        args = ["a", "b"]
+        expected = {"arg": spec.args[0].parse.return_value,
+                    "arg_2": spec.args[1].parse.return_value}
         command = Mock(spec=Command, raw_args=args, argument_spec=spec)
         result = await parse_args(command)
         self.assertEqual(result, expected)

@@ -1,7 +1,7 @@
 from candybot import data
 from candybot.interface import discord
 from candybot.engine import CandyValue
-from candybot.commands.framework import Command, ArgumentSpec, UserArgument, CandyArgument, ZeroAmountArgument
+from candybot.commands.framework import Command, ArgumentSpec, UserArgument, CandyArgument, PositiveAmountArgument
 
 
 class GiftCommand(Command):
@@ -9,7 +9,7 @@ class GiftCommand(Command):
     help = "Gifts candy to someone else."
     aliases = ["give"]
     examples = ["@User 5 🍎", "User#1234 10 apple"]
-    argument_spec = ArgumentSpec([UserArgument, ZeroAmountArgument, CandyArgument], optional=False)
+    argument_spec = ArgumentSpec([UserArgument, PositiveAmountArgument, CandyArgument], optional=False)
     clean = True
     admin = False
     ignore = False

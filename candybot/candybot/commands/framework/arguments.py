@@ -1,7 +1,6 @@
 from candybot import converters
 
 
-# TODO: Define a get index to get the args?
 class ArgumentSpec:
     def __init__(self, args, optional):
         self.args = args
@@ -12,6 +11,9 @@ class ArgumentSpec:
 
     def __len__(self):
         return len(self.args)
+
+    def __getitem__(self, item):
+        return self.args[item]
 
     def __str__(self):
         args = []
@@ -124,7 +126,7 @@ class AmountArgument(Argument):
         return converters.to_amount(arg, True)
 
 
-class ZeroAmountArgument(AmountArgument):
+class PositiveAmountArgument(AmountArgument):
     @staticmethod
     async def parse(arg, command):
         return converters.to_amount(arg, False)
