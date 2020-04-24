@@ -12,8 +12,8 @@ class ChanceCandyCommand(CandySettingsCommand):
     ignore = False
 
     async def _run(self):
-        candy = self.args["candy"]
-        amount = self.args["amount"]
+        candy = self.args[0]
+        amount = self.args[1]
         candy_settings = next(x for x in self.server_settings.candy if x.candy == candy)
         candy_settings.chance = amount
         data.set_settings(self.server.id, self.server_settings)

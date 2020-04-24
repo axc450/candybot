@@ -12,7 +12,7 @@ class ChannelsCommand(SettingsCommand):
     ignore = False
 
     async def _run(self):
-        channel = self.args.get("channel")
+        channel = self.args[0]
         channels = self.server_settings.channels
         if channel is None:
             self.title = ":hash: CandyBot Channels"

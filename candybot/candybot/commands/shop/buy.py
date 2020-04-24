@@ -15,7 +15,7 @@ class BuyCommand(ShopCommand):
     ignore = False
 
     async def _run(self):
-        item = self.args["item"]
+        item = self.args[0]
         shop = data.get_shop(self.server.id)
         shop_item = shop[item]
         user = data.get_user(self.server.id, self.author.id)

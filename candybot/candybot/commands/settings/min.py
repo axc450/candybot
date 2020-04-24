@@ -12,7 +12,7 @@ class MinCommand(SettingsCommand):
     ignore = False
 
     async def _run(self):
-        amount = self.args["amount"]
+        amount = self.args[0]
         if amount > self.server_settings.max:
             return
         self.server_settings.min = amount

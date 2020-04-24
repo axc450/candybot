@@ -12,7 +12,7 @@ class RemoveCandyCommand(CandySettingsCommand):
     ignore = False
 
     async def _run(self):
-        candy = self.args["candy"]
+        candy = self.args[0]
         # Candy Settings
         self.server_settings.remove_candy(candy)
         data.set_settings(self.server.id, self.server_settings)

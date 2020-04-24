@@ -14,7 +14,7 @@ class AddRoleCommand(ShopCommand):
     ignore = False
 
     async def _run(self):
-        role = self.args["role"]
+        role = self.args[0]
         shop = data.get_shop(self.server.id)
         shop.roles.append(Role(role.id))
         data.set_shop(self.server.id, shop)

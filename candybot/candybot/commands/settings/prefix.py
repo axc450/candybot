@@ -12,7 +12,7 @@ class PrefixCommand(SettingsCommand):
     ignore = False
 
     async def _run(self):
-        prefix = self.args["prefix"]
+        prefix = self.args[0]
         self.server_settings.prefix = prefix
         data.set_settings(self.server.id, self.server_settings)
         await self.send(f"Prefix has been changed to `{prefix}`")

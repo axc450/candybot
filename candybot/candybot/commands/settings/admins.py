@@ -12,7 +12,7 @@ class AdminsCommand(SettingsCommand):
     ignore = False
 
     async def _run(self):
-        user = self.args.get("user")
+        user = self.args[0]
         admins = self.server_settings.admins
         if user is None:
             self.title = ":lifter: CandyBot Admins"

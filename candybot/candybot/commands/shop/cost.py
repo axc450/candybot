@@ -13,9 +13,9 @@ class CostCommand(ShopCommand):
     ignore = False
 
     async def _run(self):
-        item = self.args["item"]
-        candy = self.args["candy"]
-        amount = self.args["amount"]
+        item = self.args[0]
+        candy = self.args[1]
+        amount = self.args[2]
         shop = data.get_shop(self.server.id)
         shop[item].cost[candy] = amount
         data.set_shop(self.server.id, shop)

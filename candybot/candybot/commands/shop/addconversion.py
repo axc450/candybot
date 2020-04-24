@@ -15,8 +15,8 @@ class AddConversionCommand(ShopCommand):
     ignore = False
 
     async def _run(self):
-        candy = self.args["candy"]
-        amount = self.args["amount"]
+        candy = self.args[0]
+        amount = self.args[1]
         shop = data.get_shop(self.server.id)
         conversion = Conversion(CandyValue(candy, amount))
         shop.conversions.append(conversion)

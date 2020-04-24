@@ -17,7 +17,7 @@ class LeaderboardCommand(Command):
     emojis = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "keycap_ten"]
 
     async def _run(self):
-        candy = self.args.get("candy")
+        candy = self.args[0]
         users = data.get_users(self.server.id)
         sorted_users = sorted(users, key=self._sorting_func, reverse=True)
         lines = await self._generate_lines(sorted_users, candy)

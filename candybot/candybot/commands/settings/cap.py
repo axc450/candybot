@@ -12,7 +12,7 @@ class CapCommand(SettingsCommand):
     ignore = False
 
     async def _run(self):
-        amount = self.args["amount"]
+        amount = self.args[0]
         self.server_settings.cap = amount
         data.set_settings(self.server.id, self.server_settings)
         await self.send(f"Candy cap been changed to `{amount}`")

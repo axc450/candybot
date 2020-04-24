@@ -12,7 +12,7 @@ class BlacklistCommand(AdminCommand):
     ignore = False
     
     async def _run(self):
-        user = self.args.get("user")
+        user = self.args[0]
         blacklist = self.server_settings.blacklist
         if user is None:
             self.title = ":lock: CandyBot Blacklist"

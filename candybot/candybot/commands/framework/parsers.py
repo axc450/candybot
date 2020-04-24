@@ -33,7 +33,7 @@ def find_match(args, spec):
         except IndexError:
             # We ran of of args (ie the args given < spec length)
             if len(spec) - 1 == i and spec.optional:
-                return match
+                return match + [None]
             raise
     # If we have more args left (ie the args given > spec length)
     if len(args) > i + 1:
@@ -45,12 +45,8 @@ def find_match(args, spec):
 
 
 async def parse_match(match, command):
-    result = {}
     for i, arg in enumerate(match):
-        arg_type = command.argument_spec[i]
-        key = arg_type.name
-        if key in result:
-            suffix = len(list(x for x in result if x.startswith(key))) + 1
-            key = f"{key}_{suffix}"
-        result[key] = await arg_type.parse(arg, command)
-    return result
+        if match[i]:
+            arg_type = command.argument_spec[i]
+            match[i] = await arg_type.parse(arg, command)
+    return match

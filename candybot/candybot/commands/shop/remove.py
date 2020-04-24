@@ -14,7 +14,7 @@ class RemoveCommand(ShopCommand):
     ignore = False
 
     async def _run(self):
-        item = self.args["item"]
+        item = self.args[0]
         shop = data.get_shop(self.server.id)
         shop.remove_item(item)
         data.set_shop(self.server.id, shop)

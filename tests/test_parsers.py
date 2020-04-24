@@ -71,9 +71,9 @@ class Args(TestCase):
     async def test_basic(self):
         spec = self.mock_spec([self.mock_argument(), self.mock_argument(), self.mock_argument()])
         args = ["a", "b", "c"]
-        expected = {spec.args[0].name: spec.args[0].parse.return_value,
-                    spec.args[1].name: spec.args[1].parse.return_value,
-                    spec.args[2].name: spec.args[2].parse.return_value}
+        expected = [spec.args[0].parse.return_value,
+                    spec.args[1].parse.return_value,
+                    spec.args[2].parse.return_value]
         command = Mock(spec=Command, raw_args=args, argument_spec=spec)
         result = await parse_args(command)
         self.assertEqual(result, expected)
@@ -83,8 +83,8 @@ class Args(TestCase):
         mock_argument.name = "arg"
         spec = self.mock_spec([mock_argument, mock_argument])
         args = ["a", "b"]
-        expected = {"arg": spec.args[0].parse.return_value,
-                    "arg_2": spec.args[1].parse.return_value}
+        expected = [spec.args[0].parse.return_value,
+                    spec.args[1].parse.return_value]
         command = Mock(spec=Command, raw_args=args, argument_spec=spec)
         result = await parse_args(command)
         self.assertEqual(result, expected)
@@ -101,22 +101,23 @@ class Args(TestCase):
         spec.args = []
         command = Mock(spec=Command, raw_args=[], argument_spec=spec)
         result = await parse_args(command)
-        self.assertEqual(result, {})
+        self.assertEqual(result, [])
 
     async def test_optional_last_arg(self):
         spec = self.mock_spec([self.mock_argument(), self.mock_argument(), self.mock_argument()], True)
 
         args = ["a", "b", "c"]
-        expected = {spec.args[0].name: spec.args[0].parse.return_value,
-                    spec.args[1].name: spec.args[1].parse.return_value,
-                    spec.args[2].name: spec.args[2].parse.return_value}
+        expected = [spec.args[0].parse.return_value,
+                    spec.args[1].parse.return_value,
+                    spec.args[2].parse.return_value]
         command = Mock(spec=Command, raw_args=args, argument_spec=spec)
         result = await parse_args(command)
         self.assertEqual(result, expected)
 
         args = ["a", "b"]
-        expected = {spec.args[0].name: spec.args[0].parse.return_value,
-                    spec.args[1].name: spec.args[1].parse.return_value}
+        expected = [spec.args[0].parse.return_value,
+                    spec.args[1].parse.return_value,
+                    None]
         command = Mock(spec=Command, raw_args=args, argument_spec=spec)
         result = await parse_args(command)
         self.assertEqual(result, expected)
@@ -125,9 +126,9 @@ class Args(TestCase):
         spec = self.mock_spec([self.mock_argument(), self.mock_argument(), self.mock_argument(True)], True)
 
         args = ["a", "b", "c", "d"]
-        expected = {spec.args[0].name: spec.args[0].parse.return_value,
-                    spec.args[1].name: spec.args[1].parse.return_value,
-                    spec.args[2].name: spec.args[2].parse.return_value}
+        expected = [spec.args[0].parse.return_value,
+                    spec.args[1].parse.return_value,
+                    spec.args[2].parse.return_value]
         command = Mock(spec=Command, raw_args=args, argument_spec=spec)
         result = await parse_args(command)
         self.assertEqual(result, expected)

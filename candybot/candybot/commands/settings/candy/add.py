@@ -13,8 +13,8 @@ class AddCandyCommand(CandySettingsCommand):
     ignore = False
 
     async def _run(self):
-        emoji = self.args["emoji"]
-        name = self.args["name"]
+        emoji = self.args[0]
+        name = self.args[1]
         candy = Candy(name, emoji)
         candy_settings = CandySettings(candy)
         if candy in [x.candy for x in self.server_settings.candy]:

@@ -14,9 +14,9 @@ class SetCommand(AdminCommand):
     ignore = False
 
     async def _run(self):
-        user = self.args["user"]
-        amount = self.args["amount"]
-        candy = self.args["candy"]
+        user = self.args[0]
+        amount = self.args[1]
+        candy = self.args[2]
         candy_value = CandyValue(candy, amount)
         db_user = data.get_user(self.server.id, user.id)
         db_user.inv[candy] = candy_value.value

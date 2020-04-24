@@ -16,9 +16,9 @@ class GiftCommand(Command):
 
     # TODO: Reduce database calls in here if possible (use a cache?)
     async def _run(self):
-        user = self.args["user"]
-        candy = self.args["candy"]
-        amount = self.args["amount"]
+        user = self.args[0]
+        candy = self.args[1]
+        amount = self.args[2]
 
         # Users shouldn't be able to gift themselves...
         if self.message.author == user:

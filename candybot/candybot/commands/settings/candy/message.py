@@ -12,8 +12,8 @@ class MessageCandyCommand(CandySettingsCommand):
     ignore = False
 
     async def _run(self):
-        candy = self.args["candy"]
-        text = self.args["text"]
+        candy = self.args[0]
+        text = self.args[1]
         candy_settings = next(x for x in self.server_settings.candy if x.candy == candy)
         candy_settings.text = text
         data.set_settings(self.server.id, self.server_settings)

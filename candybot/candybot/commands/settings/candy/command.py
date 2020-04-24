@@ -12,8 +12,8 @@ class CommandCandyCommand(CandySettingsCommand):
     ignore = False
 
     async def _run(self):
-        candy = self.args["candy"]
-        command = self.args["command"]
+        candy = self.args[0]
+        command = self.args[1]
         candy_settings = next(x for x in self.server_settings.candy if x.candy == candy)
         candy_settings.command = command
         data.set_settings(self.server.id, self.server_settings)
