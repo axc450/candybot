@@ -14,6 +14,6 @@ class InvCommand(Command):
     ignore = False
 
     async def _run(self):
-        user = self.args[0]
+        user = self.args[0] if self.args[0] else self.message.author
         inv = data.get_user(self.server.id, user.id).inv
         await discord.send_embed(self.message.channel, inv.list_str, author=user)
