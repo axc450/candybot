@@ -74,16 +74,25 @@ async def handle_command(message, server_settings):
     if command:
         command = command(server_settings, message, args)
         await command.run()
+        return
     # If not, might be a state command
     elif len(args) == 1:
-        state = STATE.get(message.channel.id)
-        if isinstance(state, CandyDrop):
-            command = commands.PickCommand(server_settings, invocation=args[0], message=message)
-        elif isinstance(state, Confirmation):
-            command = commands.ConfirmCommand(server_settings, args[0], message=message)
-        else:
+        if await handle_state_command(message, server_settings, args[0]):
             return
-        await command.run()
+    # The message was a command, but could not be parsed, so delete
+    await message.delete()
+
+
+async def handle_state_command(message, server_settings, invocation):
+    state = STATE.get(message.channel.id)
+    if isinstance(state, CandyDrop):
+        command = commands.PickCommand(server_settings, invocation=invocation, message=message)
+    elif isinstance(state, Confirmation):
+        command = commands.ConfirmCommand(server_settings, invocation, message=message)
+    else:
+        return False
+    await command.run()
+    return True
 
 
 async def handle_candy(message, server_settings):
