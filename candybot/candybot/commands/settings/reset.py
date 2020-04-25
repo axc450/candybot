@@ -1,5 +1,5 @@
 from candybot import data
-from candybot.engine import Settings, Shop, Stats
+from candybot.engine import Settings, Shop, Stats, engine
 from candybot.commands.framework import SettingsCommand, ArgumentSpec
 
 
@@ -13,8 +13,12 @@ class ResetCommand(SettingsCommand):
     clean = True
     ignore = False
 
-    # TODO: Ask for confirmation
+    confirm_msg = "Are you sure you want to reset CandyBot?"
+
     async def _run(self):
+        await engine.confirm(self)
+
+    async def accept(self):
         data.set_settings(self.server.id, Settings.from_default())
         data.set_shop(self.server.id, Shop.from_default())
         data.set_stats(self.server.id, Stats.from_default())

@@ -74,9 +74,15 @@ async def handle_command(message, server_settings):
     if command:
         command = command(server_settings, message, args)
         await command.run()
-    # If not, might be a candy command
-    elif len(args) == 1 and STATE.get(message.channel.id):
-        command = commands.PickCommand(server_settings, message, invocation=args[0])
+    # If not, might be a state command
+    elif len(args) == 1:
+        state = STATE.get(message.channel.id)
+        if isinstance(state, CandyDrop):
+            command = commands.PickCommand(server_settings, invocation=args[0], message=message)
+        elif isinstance(state, Confirmation):
+            command = commands.ConfirmCommand(server_settings, args[0], message=message)
+        else:
+            return
         await command.run()
 
 
@@ -99,7 +105,8 @@ async def proc(server_settings, channel, candy_setting, force):
     candy_drop = CandyDrop(command, candy_setting.text, candy_value)
     # Need to obtain the lock to avoid multiple messages from proccing
     async with STATE_LOCK:
-        if force or STATE.get(channel.id) is None:
+        state = STATE.get(channel.id)
+        if force or not isinstance(state, CandyDrop):
             # This message will proc a candy drop
             # Must set the state inside the lock to avoid other messages from proccing
             STATE[channel.id] = candy_drop
@@ -111,3 +118,21 @@ async def proc(server_settings, channel, candy_setting, force):
     stats.candy_dropped += candy_value
     data.set_stats(channel.guild.id, stats)
     candy_drop.message = await channel.send(candy_drop.drop_str)
+
+
+async def confirm(command):
+    confirmation = Confirmation(command)
+    async with STATE_LOCK:
+        STATE[command.channel.id] = confirmation
+    confirmation.message = await command.send(confirmation.confirm_str)
+
+
+class Confirmation:
+    def __init__(self, command):
+        self.command = command
+        self.message = None
+
+    @property
+    def confirm_str(self):
+        invocation = f"{self.command.server_settings.prefix}{commands.ConfirmCommand.name}"
+        return self.command.confirm_msg + f"\n_Type {invocation} to confirm._"

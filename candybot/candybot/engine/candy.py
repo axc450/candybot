@@ -198,8 +198,8 @@ class CandyCollection:
 class CandyDrop:
     def __init__(self, command, message, candy_value):
         self.command = command
-        self.candy_value = candy_value
         self.message = message
+        self.candy_value = candy_value
 
     @property
     def drop_str(self):

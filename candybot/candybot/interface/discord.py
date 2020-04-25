@@ -9,7 +9,7 @@ async def send_embed(channel, text=None, title=None, color=None, author=None, fi
     for field in fields:
         if field[1]:
             embed.add_field(name=f"-- {field[0].capitalize()} --", value=field[1], inline=field[2])
-    await channel.send(embed=embed)
+    return await channel.send(embed=embed)
 
 
 def get_user(server, user_id):

@@ -1,7 +1,7 @@
 from asynctest import TestCase, patch, Mock, MagicMock, CoroutineMock, skip
 from discord import Message, Guild, TextChannel, Member
 from candybot import data
-from candybot.commands.pick import PickCommand
+from candybot.commands.state.pick import PickCommand
 from candybot.engine import CandyDrop, CandyValue, CandyCollection, Candy, Settings, User
 
 

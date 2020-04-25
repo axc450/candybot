@@ -88,9 +88,9 @@ class Command:
 
     async def send(self, text=None, fields=[]):
         if self.title:
-            await discord.send_embed(self.message.channel, text, title=self.title, color=self.message.guild.me.color, fields=fields)
+            return await discord.send_embed(self.message.channel, text, title=self.title, color=self.message.guild.me.color, fields=fields)
         else:
-            await discord.send_embed(self.message.channel, text, author=self.message.author)
+            return await discord.send_embed(self.message.channel, text, author=self.message.author)
 
     def add_with_cap(self, a, b):
         # What the value would be if there was no cap
