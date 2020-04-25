@@ -1,5 +1,5 @@
-from candybot import data
-from candybot.engine import Role, Conversion
+from candybot import data, utils
+from candybot.engine import Role, Conversion, Upgrade
 from candybot.interface import discord
 from candybot.commands.framework import ShopCommand, ArgumentSpec, ShopItemArgument
 
@@ -24,6 +24,8 @@ class BuyCommand(ShopCommand):
                 await self.buy_role(user, shop_item)
             elif isinstance(shop_item, Conversion):
                 await self.buy_conversion(user, shop_item)
+            elif isinstance(shop_item, Upgrade):
+                await self.buy_upgrade(user, shop_item)
         else:
             await self.send(f"You need {shop_item.cost.line_str} to buy this item!")
 
@@ -49,3 +51,12 @@ class BuyCommand(ShopCommand):
         data.set_user(user)
         self.update_stats()
         await self.send(f"You converted {conversion.cost.line_str} to {conversion.candy_value.small_str}")
+
+    async def buy_upgrade(self, user, upgrade):
+        user.inv += -upgrade.cost
+        data.set_user(user)
+        self.server_settings.update_candy_chance_value(upgrade.candy)
+        data.set_settings(self.server.id, self.server_settings)
+        self.update_stats()
+        new_chance = utils.chance_value_to_percent(self.server_settings.candy, upgrade.candy)
+        await self.send(f"{upgrade.candy} chance has been upgraded to {new_chance:.2f}%")

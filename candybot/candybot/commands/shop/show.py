@@ -20,8 +20,10 @@ class ShowCommand(ShopCommand):
         shop_all = shop.all
         roles = await self.get_roles(shop_all["roles"])
         conversions = self.get_conversions(shop_all["conversions"])
+        upgrades = self.get_upgrades(shop_all["upgrades"])
         await self.send(fields=[("Roles", roles, True),
-                                ("Conversions", conversions, True)])
+                                ("Conversions", conversions, True),
+                                ("Upgrades", upgrades, True)])
 
     async def get_roles(self, roles):
         lines = []
@@ -30,8 +32,16 @@ class ShowCommand(ShopCommand):
             lines.append(f"[**{position}**] {role.mention} {item.cost.line_str}")
         return "\n".join(lines)
 
-    def get_conversions(self, conversions):
+    @staticmethod
+    def get_conversions(conversions):
         lines = []
         for position, item in conversions:
+            lines.append(f"[**{position}**] {item}")
+        return "\n".join(lines)
+
+    @staticmethod
+    def get_upgrades(upgrades):
+        lines = []
+        for position, item in upgrades:
             lines.append(f"[**{position}**] {item}")
         return "\n".join(lines)

@@ -1,7 +1,6 @@
 from candybot import data
 from candybot.commands.framework import ShopCommand, ArgumentSpec, PositiveAmountArgument, CandyArgument
-from candybot.engine import CandyValue
-from candybot.engine.shop import Conversion
+from candybot.engine import CandyValue, Conversion
 
 
 class AddConversionCommand(ShopCommand):

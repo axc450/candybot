@@ -1,5 +1,5 @@
 from .candy import Candy, CandySettings, CandyValue, CandyCollection, CandyDrop
-from .shop import Shop, Role, Conversion
+from .shop import Shop, Role, Conversion, Upgrade
 from .settings import Settings
 from .stats import Stats
 from .users import User

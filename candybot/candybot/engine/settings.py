@@ -15,6 +15,10 @@ class Settings:
         self.channels = channels
         self.candy: List[CandySettings] = candy
 
+    def update_candy_chance_value(self, candy, value=None):
+        candy_settings = next(x for x in self.candy if x.candy == candy)
+        candy_settings.chance = value if value else candy_settings.chance + 1
+
     def remove_candy(self, candy):
         candy_setting = next(x for x in self.candy if x.candy == candy)
         self.candy.remove(candy_setting)
@@ -22,7 +26,7 @@ class Settings:
     @classmethod
     def from_default(cls):
         candy = Candy("candy", "🍬")
-        candy_settings = [CandySettings(candy, 1)]
+        candy_settings = [CandySettings(candy, 5)]
         return cls(".", 0.2, 3, 5, 10, 100, [], [], [], candy_settings)
 
     @classmethod
