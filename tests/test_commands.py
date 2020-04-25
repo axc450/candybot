@@ -29,7 +29,7 @@ class Pick(CommandTestCase):
         mock_inv = Mock(spec=CandyCollection, __getitem__=Mock(return_value=inv), __iadd__=Mock())
         mock_get_user = Mock(spec=data.get_user, return_value=Mock(spec=User, inv=mock_inv))
         self.mock_data = Mock(spec=data, get_user=mock_get_user)
-        self.patch("candybot.commands.pick.data", self.mock_data)
+        self.patch("candybot.commands.state.pick.data", self.mock_data)
         self.mock_send = CoroutineMock()
         self.patch("candybot.commands.Command.send", self.mock_send)
 
