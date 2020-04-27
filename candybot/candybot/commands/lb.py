@@ -50,5 +50,5 @@ class LeaderboardCommand(Command):
         return lines
 
     def _sorting_func(self, x):
-        candy = self.args.get("candy")
+        candy = self.args[0]
         return x.inv[candy] if candy else x.inv.total
