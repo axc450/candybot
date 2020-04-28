@@ -35,14 +35,14 @@ class BuyCommand(ShopCommand):
         data.set_stats(self.server.id, stats)
 
     async def buy_role(self, user, role):
-        role = discord.get_role(self.message.guild, role.item)
-        if role in self.message.author.roles:
+        discord_role = discord.get_role(self.message.guild, role.item)
+        if discord_role in self.message.author.roles:
             await self.send("You already have that role!")
         else:
             user.inv += -role.cost
             data.set_user(user)
-            await discord.apply_role(self.message.author, role)
-            await self.send(f"You have bought the {role.mention} role!")
+            await discord.apply_role(self.message.author, discord_role)
+            await self.send(f"You have bought the {discord_role.mention} role!")
             self.update_stats()
 
     async def buy_conversion(self, user, conversion):
