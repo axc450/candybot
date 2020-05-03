@@ -23,14 +23,12 @@ class StatsCommand(Command):
         await self.send(fields=fields)
 
     def _get_info(self):
-        channels = [discord.get_channel(self.message.guild, x).mention for x in self.server_settings.channels]
         return "\n".join([
             self._make_field("Version", __main__.VERSION),
             self._make_field("Command Prefix", f"`{self.server_settings.prefix}`"),
             self._make_field("Drop Chance", f"{self.server_settings.chance * 100:.2f}%"),
             self._make_field("Drop Amount", f"{self.server_settings.min}-{self.server_settings.max}"),
-            self._make_field("Candy Cap", self.server_settings.cap),
-            self._make_field("Channels", ("\n" + "\n".join(channels)) if channels else "All")
+            self._make_field("Candy Cap", self.server_settings.cap)
         ])
 
     def _get_candy(self):

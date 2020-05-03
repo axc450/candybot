@@ -3,7 +3,7 @@ from candybot.engine import CandySettings, Candy
 
 
 class Settings:
-    def __init__(self, prefix, chance, pick_limit, min, max, cap, admins, blacklist, channels, candy):
+    def __init__(self, prefix, chance, pick_limit, min, max, cap, admins, blacklist, candy):
         self.prefix = prefix
         self.chance = chance
         self.pick_limit = pick_limit
@@ -12,7 +12,6 @@ class Settings:
         self.cap = cap
         self.admins = admins
         self.blacklist = blacklist
-        self.channels = channels
         self.candy: List[CandySettings] = candy
 
     def update_candy_chance_value(self, candy, value=None):
@@ -27,7 +26,7 @@ class Settings:
     def from_default(cls):
         candy = Candy("candy", "🍬")
         candy_settings = [CandySettings(candy, 5)]
-        return cls(".", 0.2, 3, 5, 10, 100, [], [], [], candy_settings)
+        return cls(".", 0.2, 3, 5, 10, 100, [], [], candy_settings)
 
     @classmethod
     def from_json(cls, json):
@@ -40,7 +39,6 @@ class Settings:
             cap=json["cap"],
             admins=json["admins"],
             blacklist=json["blacklist"],
-            channels=json["channels"],
             candy=[CandySettings.from_json(x) for x in json["candy"]]
         )
 
@@ -55,7 +53,6 @@ class Settings:
             "cap": self.cap,
             "admins": self.admins,
             "blacklist": self.blacklist,
-            "channels": self.channels,
             "candy": [x.to_json for x in self.candy]
         }
 
