@@ -1,7 +1,6 @@
 import sys
 from candybot.clients import local, live
-from candybot.interface import database
-from candybot import files
+from candybot.interface import database, files
 
 VERSION = "v" + files.load_file("version", "Could not find a CandyBot version!")
 SETTINGS = files.load_file("settings.json", "Could not load the settings file!", is_json=True)
