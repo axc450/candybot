@@ -1,10 +1,11 @@
 from candybot import data
+from candybot.commands import Command
 from candybot.interface import discord
-from candybot.commands.framework import ShopCommand, ArgumentSpec
+from candybot.commands.framework import ArgumentSpec
 
 
-class ShowCommand(ShopCommand):
-    name = "show"
+class ShopCommand(Command):
+    name = "shop"
     help = "Shows the shop."
     aliases = []
     examples = [""]

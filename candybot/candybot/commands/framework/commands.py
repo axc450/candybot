@@ -139,12 +139,12 @@ class SettingsCommand(Command):
         raise NotImplementedError
 
 
-class ShopCommand(Command):
+class ShopSettingsCommand(SettingsCommand):
     name = "shop"
     help = "CandyBot shop commands."
     aliases = []
     argument_spec = ArgumentSpec([CommandArgument], False)
-    admin = False
+    admin = True
     ignore = False
 
     @property
@@ -156,7 +156,7 @@ class ShopCommand(Command):
         raise NotImplementedError
 
     def _run(self):
-        print("hi")
+        raise NotImplementedError
 
 
 class CandySettingsCommand(SettingsCommand):

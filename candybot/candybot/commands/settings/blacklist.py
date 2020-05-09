@@ -1,8 +1,8 @@
 from candybot import data, converters
-from candybot.commands.framework import AdminCommand, ArgumentSpec, UserArgument
+from candybot.commands.framework import SettingsCommand, ArgumentSpec, UserArgument
 
 
-class BlacklistCommand(AdminCommand):
+class BlacklistCommand(SettingsCommand):
     name = "blacklist"
     help = "Shows current blacklist or blacklists a user from interacting with CandyBot."
     aliases = ["bl"]

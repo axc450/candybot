@@ -1,9 +1,9 @@
 from candybot import data
-from candybot.commands.framework import ShopCommand, ArgumentSpec, PositiveAmountArgument, CandyArgument
+from candybot.commands.framework import ShopSettingsCommand, ArgumentSpec, PositiveAmountArgument, CandyArgument
 from candybot.engine import CandyValue, Conversion
 
 
-class AddConversionCommand(ShopCommand):
+class AddConversionCommand(ShopSettingsCommand):
     name = "addconversion"
     help = "Adds a conversion to the shop."
     aliases = ["conversionadd"]

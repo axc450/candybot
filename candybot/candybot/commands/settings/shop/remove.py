@@ -1,9 +1,8 @@
 from candybot import data
-from candybot.commands.framework import ShopCommand, ArgumentSpec, ShopItemArgument
-from candybot.engine import Role
+from candybot.commands.framework import ShopSettingsCommand, ArgumentSpec, ShopItemArgument
 
 
-class RemoveCommand(ShopCommand):
+class RemoveCommand(ShopSettingsCommand):
     name = "remove"
     help = "Removes a shop item."
     aliases = []

@@ -1,9 +1,9 @@
 from candybot import data
-from candybot.commands.framework import ShopCommand, ArgumentSpec, RoleArgument
+from candybot.commands.framework import ShopSettingsCommand, ArgumentSpec, RoleArgument
 from candybot.engine import Role
 
 
-class AddRoleCommand(ShopCommand):
+class AddRoleCommand(ShopSettingsCommand):
     name = "addrole"
     help = "Adds a role to the shop."
     aliases = ["roleadd"]

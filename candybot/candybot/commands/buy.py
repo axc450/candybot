@@ -1,10 +1,11 @@
 from candybot import data, utils
+from candybot.commands import Command
 from candybot.engine import Role, Conversion, Upgrade
 from candybot.interface import discord
-from candybot.commands.framework import ShopCommand, ArgumentSpec, ShopItemArgument
+from candybot.commands.framework import ArgumentSpec, ShopItemArgument
 
 
-class BuyCommand(ShopCommand):
+class BuyCommand(Command):
     name = "buy"
     help = "Buys an item from the shop."
     aliases = []

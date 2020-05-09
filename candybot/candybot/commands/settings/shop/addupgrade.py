@@ -1,9 +1,9 @@
 from candybot import data
-from candybot.commands.framework import ShopCommand, ArgumentSpec, CandyArgument
+from candybot.commands.framework import ShopSettingsCommand, ArgumentSpec, CandyArgument
 from candybot.engine import Upgrade
 
 
-class AddUpgradeCommand(ShopCommand):
+class AddUpgradeCommand(ShopSettingsCommand):
     name = "addupgrade"
     help = "Adds an upgrade to the shop."
     aliases = ["upgradeadd"]

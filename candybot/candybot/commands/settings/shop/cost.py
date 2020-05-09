@@ -1,8 +1,8 @@
 from candybot import data
-from candybot.commands.framework import ShopCommand, ArgumentSpec, ShopItemArgument, CandyArgument, AmountArgument
+from candybot.commands.framework import ShopSettingsCommand, ArgumentSpec, ShopItemArgument, CandyArgument, AmountArgument
 
 
-class CostCommand(ShopCommand):
+class CostCommand(ShopSettingsCommand):
     name = "cost"
     help = "Changes a shop item cost."
     aliases = []
