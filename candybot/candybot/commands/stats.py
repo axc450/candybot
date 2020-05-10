@@ -1,6 +1,5 @@
 import __main__
 from candybot import data
-from candybot.interface import discord
 from candybot.commands.framework import Command, ArgumentSpec
 
 

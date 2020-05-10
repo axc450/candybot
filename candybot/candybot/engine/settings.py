@@ -16,7 +16,7 @@ class Settings:
 
     def update_candy_chance_value(self, candy, value=None):
         candy_settings = next(x for x in self.candy if x.candy == candy)
-        candy_settings.chance = value if value else candy_settings.chance + 1
+        candy_settings.chance = candy_settings.chance + 1 if value is None else value
 
     def remove_candy(self, candy):
         candy_setting = next(x for x in self.candy if x.candy == candy)

@@ -82,9 +82,11 @@ async def handle_candy(message, server_settings):
     state = STATE.get(message.channel.id)
     if not state:
         if utils.roll(server_settings.chance):
-            weights = [x.chance for x in server_settings.candy]
-            candy_setting = utils.get_choice(server_settings.candy, weights)
-            await proc(server_settings, message.channel, candy_setting, False)
+            candy_settings = [x for x in server_settings.candy if x.chance]
+            if candy_settings:
+                weights = [x.chance for x in candy_settings]
+                candy_setting = utils.get_choice(candy_settings, weights)
+                await proc(server_settings, message.channel, candy_setting, False)
 
 
 async def proc(server_settings, channel, candy_setting, force):
