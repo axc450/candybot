@@ -36,7 +36,7 @@ class BuyCommand(Command):
         data.set_stats(self.server.id, stats)
 
     async def buy_role(self, user, role):
-        discord_role = discord.get_role(self.message.guild, role.item)
+        discord_role = discord.get_role(self.message.guild, role.role)
         if discord_role in self.message.author.roles:
             await self.send("You already have that role!")
         else:

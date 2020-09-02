@@ -23,7 +23,7 @@ class Member:
     guild_permissions = Permissions()
 
     @staticmethod
-    async def add_roles(*_):
+    async def add_roles(role, reason):
         pass
 
 
@@ -65,22 +65,24 @@ class Message:
 
 class Embed:
     def __init__(self, description, title, color):
-        self.description = description
+        self.description = description if description is not None else ""
+        self.fields = []
         self.title = title
         self.color = color
         self.name = None
         self.icon_url = None
 
     def __str__(self):
-        attrs = {x: y for x, y in self.__dict__.items() if x != "description"}
-        return f"{self.description}\n{attrs}"
+        text = "\n".join([self.description] + self.fields)
+        attrs = {x: y for x, y in self.__dict__.items() if x not in ["description", "fields"]}
+        return f"{text}\n{attrs}"
 
     def set_author(self, name, icon_url):
         self.name = name
         self.icon_url = icon_url
 
-    def add_field(self, name, value, _):
-        self.description += f"{name}\n{value}"
+    def add_field(self, name, value, **_):
+        self.fields.append(f"{name}\n{value}")
 
 
 class DiscordModule:

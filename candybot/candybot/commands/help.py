@@ -45,9 +45,9 @@ class HelpCommand(Command):
         aliases = [f"`{x}`" for x in command.aliases]
         aliases = "\n".join(aliases)
         body = (f"`{prefix}{command_name}`\n"
-                f"{command.help}\n")
+                f"{command.help}")
         usage = (f"`{prefix}{command_name} {command.argument_spec}`\n"
-                 f"{arg_help}\n")
+                 f"{arg_help}")
         aliases = aliases if aliases else "None"
         examples = f"{arg_examples}"
 
